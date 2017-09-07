@@ -814,7 +814,7 @@ class ShopgateItemModel extends Shopgate_Model_Catalog_Product
             $i++;
         }
 
-        return 100000 - $i;
+        return $i;
     }
 
     /**
