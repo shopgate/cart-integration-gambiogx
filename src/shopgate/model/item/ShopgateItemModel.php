@@ -780,8 +780,10 @@ class ShopgateItemModel extends Shopgate_Model_Catalog_Product
             : 'DESC';
         $orderBy  = ' ORDER BY ' . $orderBy1 . ' ' . $orderBy2 . ', p.products_sort ASC, p.products_id ASC';
 
-        $products_query = xtDBquery(
-            "SELECT
+        $indexTable = ShopgateTools::getCategoryIndexTable();
+        if (!$indexTable) {
+            $productsQuery = xtDBquery(
+                "SELECT
             pc.products_id
             FROM " . TABLE_PRODUCTS_TO_CATEGORIES . " pc,
             " . TABLE_PRODUCTS . " p,
@@ -792,10 +794,23 @@ class ShopgateItemModel extends Shopgate_Model_Catalog_Product
             AND pd.language_id = '" . $this->languageId . "'
             AND p.products_status=1
             " . $orderBy
-        );
+            );
+        } else {
+            $productsQuery = xtDBquery(
+                "SELECT
+            p.products_id
+            FROM " . TABLE_PRODUCTS . " AS p
+                LEFT JOIN " . TABLE_PRODUCTS_DESCRIPTION . " AS pd ON (pd.products_id = p.products_id)
+                LEFT JOIN " . $indexTable . " AS ci ON (ci.products_id = p.products_id) 
+            WHERE p.products_status=1
+                AND pd.language_id = '" . $this->languageId . "'
+                AND ci.categories_index LIKE '%-" . $categoryData['categories_id'] . "-%'
+            " . $orderBy
+            );
+        }
 
         $i = 0;
-        while (($product = xtc_db_fetch_array($products_query, true)) && ($product['products_id'] != $itemNumber)) {
+        while (($product = xtc_db_fetch_array($productsQuery, true)) && ($product['products_id'] != $itemNumber)) {
             $i++;
         }
 
@@ -816,7 +831,7 @@ class ShopgateItemModel extends Shopgate_Model_Catalog_Product
     {
         $categoryNumbers = $this->getProductCategories($item['products_id']);
         $inheritCats     = $this->getInheritingCategories($item['products_id']);
-        $categories      = array_merge($categoryNumbers, $inheritCats);
+        $categories      = $categoryNumbers + $inheritCats;
         $numbers         = array();
         foreach ($categories as &$category) {
             $category['sortOrder'] = $this->getProductPositionInCategory($item['products_id'], $category);
@@ -879,7 +894,7 @@ class ShopgateItemModel extends Shopgate_Model_Catalog_Product
             if (empty($category["categories_id"])) {
                 continue;
             }
-            $category_numbers[] = $category;
+            $category_numbers[$category["categories_id"]] = $category;
         }
 
         return $category_numbers;
