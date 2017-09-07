@@ -353,7 +353,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## 2.4.2
 - implemented register_customer
-- Uses Shopgate Library V## 2.4.6
+- Uses Shopgate Library Version 2.4.6
 - Problem solved which accured when the shopsystem has gZip compression activated
 
 ## 2.4.1
