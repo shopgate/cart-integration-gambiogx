@@ -606,4 +606,4 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 - supports remote cron jobs via Shopgate Plugin API
 - remote cron job for synchronization of order status at Shopgate
 
-[Unreleased]: https://github.com/shopgate/cart-integration-gambiogx/compare/2.9.66...HEAD
+[Unreleased]: https://github.com/shopgate/cart-integration-gambiogx/compare/2.9.51...HEAD
