@@ -1,0 +1,12 @@
+/.buildpath
+/.externalToolBuilders
+/.project
+/*.zip
+/nbproject
+/ant
+/.settings
+/.idea
+.DS_Store
+src/shopgate/vendor
+/.php-cs.cache
+/release/package

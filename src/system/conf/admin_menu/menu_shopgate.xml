@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<!-- {load_language_text section="shopgate"} -->
+
+        {if ACTIVATE_SHOPGATE == 'true' || $smarty.const.MODULE_PAYMENT_INSTALLED|strpos:'shopgate.php' !== false}
+<admin_menu>
+    <menugroup id="BOX_HEADING_SHOPGATE" sort="90" background="module.png" title="{$txt.BOX_HEADING_SHOPGATE}">
+        <menuitem link="FILENAME_SHOPGATE" link_param="sg_option=info" sort="1" title="{$txt.BOX_SHOPGATE_INFO}"/>
+        <menuitem link="FILENAME_SHOPGATE" link_param="sg_option=config" sort="4" title="{$txt.BOX_SHOPGATE_CONFIG}"/>
+    </menugroup>
+</admin_menu>
+        {/if}

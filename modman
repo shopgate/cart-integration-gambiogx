@@ -1,0 +1,8 @@
+admin/shopgate.php                                  admin/shopgate.php
+includes/modules/payment/shopgate.php               includes/modules/payment/shopgate.php
+lang/english/modules/payment/shopgate.php           lang/english/modules/payment/shopgate.php
+lang/german/modules/payment/shopgate.php            lang/german/modules/payment/shopgate.php
+shopgate/*                                          shopgate/
+shopgate/.htaccess                                  shopgate/.htaccess
+system/conf/admin_menu/menu_shopgate.xml            system/conf/admin_menu/menu_shopgate.xml
+system/conf/AdminMenu/menu_shopgate.xml             system/conf/AdminMenu/menu_shopgate.xml
