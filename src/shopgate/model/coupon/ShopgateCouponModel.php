@@ -375,7 +375,8 @@ class ShopgateCouponModel extends ShopgateObject
     public function addCartRuleCoupons($result, $customerGroup, $orderAmount, $returnEmptyCoupon)
     {
         $discountAmount = $orderAmount * $customerGroup['customers_status_ot_discount'] / 100;
-        if ($discountAmount > 0) {
+        $discountActive = $customerGroup['customers_status_ot_discount_flag'];
+        if ($discountActive && $discountAmount > 0) {
             $coupon = new ShopgateExternalCoupon();
             $coupon->setIsValid(true);
             $coupon->setCode(self::CART_RULE_COUPON_CODE);
