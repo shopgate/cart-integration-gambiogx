@@ -1413,6 +1413,9 @@ class ShopgatePluginGambioGX extends ShopgatePlugin
         $orderData["shipping_class"]  = $shippingInfos->getName()
             ? $shippingInfos->getName()
             : "flat_flat";
+        $orderData["order_total_weight"] = $shippingInfos->getWeight() > 0
+            ? $shippingInfos->getWeight() / 1000
+            : 0;
 
         $orderData["cc_type"]    = "";
         $orderData["cc_owner"]   = "";
