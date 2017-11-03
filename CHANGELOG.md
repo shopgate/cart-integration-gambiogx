@@ -8,6 +8,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 ### Fixed
 - sort order of products within categories with show sub products setting
 - coupon being given for deactivated customer group discount
+- total weight order now added to desktop order 
 
 ## 2.9.51
 ### Changed
