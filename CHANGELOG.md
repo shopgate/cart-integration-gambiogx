@@ -9,6 +9,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 - sort order of products within categories with show sub products setting
 - coupon being given for deactivated customer group discount
 
+### Changed
+- Shopgate Cart Integration SDK version to 2.9.70
+
 ## 2.9.51
 ### Changed
 - migrated Shopgate integration for OpenCart to GitHub
