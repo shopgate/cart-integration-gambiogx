@@ -5,9 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
+### Added
+- logic to load legacy configuration to avoid update issues
+
 ### Fixed
 - sort order of products within categories with show sub products setting
 - coupon being given for deactivated customer group discount
+
+### Changed
+- Shopgate Cart Integration SDK version to 2.9.70
 
 ## 2.9.51
 ### Changed

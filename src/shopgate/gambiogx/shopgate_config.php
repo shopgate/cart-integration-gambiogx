@@ -174,7 +174,10 @@ class ShopgateConfigGambioGx extends ShopgateConfig
         $this->shop_is_active                 = 1;
         $this->disabled_redirect_category_ids = array();
         $this->log_folder_path                = rtrim(DIR_FS_CATALOG, '/') . '/logfiles/shopgate';
-        $this->config_folder_path             = rtrim(DIR_FS_CATALOG, '/') . '/includes/shopgate';
+
+        // set path to configuration to the new path just to be safe
+        /** @noinspection PhpDeprecationInspection */
+        $this->config_folder_path             = rtrim(DIR_FS_CATALOG, '/') . '/includes/shopgate/';
 
         $this->createFolder($this->config_folder_path, 0774, true);
         $this->createFolder($this->log_folder_path, 0774, true);
@@ -236,6 +239,47 @@ class ShopgateConfigGambioGx extends ShopgateConfig
         $this->export_filters_as_properties          = "";
         $this->payment_name_mapping                  = "";
         $this->send_order_confirmation_mail          = 0;
+    }
+
+    public function buildConfigFilePath($fileName = self::DEFAULT_CONFIGURATION_FILE_NAME)
+    {
+        // if a configuration file under the default path does not exist
+        // assume it in the former (pre-composer) default path
+        return file_exists($this->getDefaultConfigFilePath($fileName))
+            ? $this->getDefaultConfigFilePath($fileName)
+            : $this->getLegacyConfigFilePath($fileName);
+    }
+
+    public function saveFile(array $fieldList, $path = null, $validate = true)
+    {
+        $fileName = null === $path
+            ? self::DEFAULT_CONFIGURATION_FILE_NAME
+            : basename($path);
+
+        // always try writing to the default path
+        $path = $this->getDefaultConfigFilePath($fileName);
+
+        parent::saveFile($fieldList, $path, $validate);
+    }
+
+    /**
+     * @param string $fileName
+     *
+     * @return string
+     */
+    private function getDefaultConfigFilePath($fileName = self::DEFAULT_CONFIGURATION_FILE_NAME)
+    {
+        return rtrim(DIR_FS_CATALOG, '/') . "/includes/shopgate/{$fileName}";
+    }
+
+    /**
+     * @param string $fileName
+     *
+     * @return string
+     */
+    private function getLegacyConfigFilePath($fileName = self::DEFAULT_CONFIGURATION_FILE_NAME)
+    {
+        return __DIR__ . '/../shopgate_library/config/' . $fileName;
     }
 
     /**
