@@ -78,7 +78,7 @@ define('SHOPGATE_CONFIG_ERROR_SAVING', 'Error saving configuration. ');
 define('SHOPGATE_CONFIG_ERROR_LOADING', 'Error loading configuration. ');
 define(
     'SHOPGATE_CONFIG_ERROR_READ_WRITE',
-    'Please check the permissions (777) for the folder &quot;/shopgate_library/config&quot; of the Shopgate plugin.'
+    'Please check the permissions (777) for the folder &quot;/includes/shopgate&quot; of the Shopgate plugin.'
 );
 define('SHOPGATE_CONFIG_ERROR_INVALID_VALUE', 'Please check your input in the following fields: ');
 define(

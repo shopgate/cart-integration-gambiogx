@@ -78,7 +78,7 @@ define('SHOPGATE_CONFIG_ERROR_SAVING', 'Fehler beim Speichern der Konfiguration.
 define('SHOPGATE_CONFIG_ERROR_LOADING', 'Fehler beim Laden der Konfiguration. ');
 define(
     'SHOPGATE_CONFIG_ERROR_READ_WRITE',
-    'Bitte überprüfen Sie die Schreibrechte (777) für den Ordner "/shopgate_library/config/" des Shopgate-Plugins.'
+    'Bitte überprüfen Sie die Schreibrechte (777) für den Ordner "/includes/shopgate/" des Shopgate-Plugins.'
 );
 define('SHOPGATE_CONFIG_ERROR_INVALID_VALUE', 'Bitte überprüfen Sie ihre Eingaben in den folgenden Feldern: ');
 define(
