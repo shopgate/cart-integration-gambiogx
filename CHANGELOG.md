@@ -5,6 +5,8 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
+### Fixed
+- incompatibility with PHP 7.1.x, which caused missing attributes on order import
 
 ## [2.9.52] - 2017-11-06
 ### Added
