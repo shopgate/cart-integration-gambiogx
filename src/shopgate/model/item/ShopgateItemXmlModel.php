@@ -755,7 +755,7 @@ class ShopgateItemXmlModel extends ShopgateItemModel
     public function setInternalOrderInfo()
     {
         if ($this->getIsChild()) {
-            $orderInfo = "";
+            $orderInfo = array();
             $i         = 0;
 
             if ($this->checkAttributeIsProperty()) {
