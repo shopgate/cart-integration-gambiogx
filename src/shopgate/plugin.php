@@ -3063,7 +3063,10 @@ class ShopgatePluginGambioGX extends ShopgatePlugin
         if ($order->getAmountShopPayment() != 0) {
             $this->log('db: save payment fee', ShopgateLogger::LOGTYPE_DEBUG);
 
-            $paymentInfos = $order->getPaymentInfos();
+            $paymentInfos    = $order->getPaymentInfos();
+            $orderTotalClass = $order->getPaymentMethod() == ShopgateOrder::COD
+                ? 'ot_cod_fee'
+                : 'ot_shipping';
 
             $ordersTotal               = array();
             $ordersTotal["orders_id"]  = $dbOrderId;
@@ -3075,7 +3078,7 @@ class ShopgatePluginGambioGX extends ShopgatePlugin
             );
             $ordersTotal["text"]       = $xtPrice->xtcFormat($order->getAmountShopPayment(), true);
             $ordersTotal["value"]      = $order->getAmountShopPayment();
-            $ordersTotal["class"]      = "ot_shipping";
+            $ordersTotal["class"]      = $orderTotalClass;
             $ordersTotal["sort_order"] = $sort++;
             xtc_db_perform(TABLE_ORDERS_TOTAL, $ordersTotal);
         }
