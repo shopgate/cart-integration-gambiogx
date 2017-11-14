@@ -7,6 +7,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 ## [Unreleased]
 ### Fixed
 - incompatibility with PHP 7.1.x, which caused missing attributes on order import
+- wrong total class for cash on delivery order fees, now using ot_cod_fee 
 
 ## [2.9.52] - 2017-11-06
 ### Added
