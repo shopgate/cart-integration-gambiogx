@@ -1406,11 +1406,11 @@ class ShopgatePluginGambioGX extends ShopgatePlugin
 
         $shippingInfos = $order->getShippingInfos();
 
-        $orderData["shipping_method"] =
+        $orderData["shipping_method"]    =
             $shippingInfos->getDisplayName()
                 ? $shippingInfos->getDisplayName()
                 : MODULE_PAYMENT_SHOPGATE_TITLE_BLANKET;
-        $orderData["shipping_class"]  = $shippingInfos->getName()
+        $orderData["shipping_class"]     = $shippingInfos->getName()
             ? $shippingInfos->getName()
             : "flat_flat";
         $orderData["order_total_weight"] = $shippingInfos->getWeight() > 0
@@ -2305,7 +2305,9 @@ class ShopgatePluginGambioGX extends ShopgatePlugin
 
             $shippingTime      = $dbProduct['shipping_status_name'];
             $internalOrderInfo = $this->jsonDecode($orderItem->getInternalOrderInfo(), true);
-            if (!empty($internalOrderInfo['is_property_attribute']) && !empty($dbProduct['use_properties_combis_shipping_time'])) {
+            if (!empty($internalOrderInfo['is_property_attribute'])
+                && !empty($dbProduct['use_properties_combis_shipping_time'])
+            ) {
                 $qry = xtc_db_query(
                     "SELECT `s`.`shipping_status_name` FROM " . TABLE_SHIPPING_STATUS . " AS `s`"
                     . " INNER JOIN " . TABLE_PRODUCTS_PROPERTIES_COMBIS . " AS `ppc`"
@@ -2713,7 +2715,7 @@ class ShopgatePluginGambioGX extends ShopgatePlugin
             }
             $this->log('method: updateItemStock', ShopgateLogger::LOGTYPE_DEBUG);
             if (!isset($updateItemStock)) {
-                $updateItemStock = true;
+                $updateItemStock    = true;
                 $noUpdateAttributes = false;
             } else {
                 // Never update attributes stock when items stock is not updated
