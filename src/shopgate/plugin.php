@@ -2248,7 +2248,7 @@ class ShopgatePluginGambioGX extends ShopgatePlugin
 
         foreach ($order->getItems() as $orderItem) {
             $order_info = $this->jsonDecode($orderItem->getInternalOrderInfo(), true);
-            unset($updateItemStock);
+            $updateItemStock = true;
 
             // The product is possibly stacked
             $stackQuantity = !empty($order_info['stack_quantity'])
@@ -2714,17 +2714,14 @@ class ShopgatePluginGambioGX extends ShopgatePlugin
                 }
             }
             $this->log('method: updateItemStock', ShopgateLogger::LOGTYPE_DEBUG);
-            if (!isset($updateItemStock)) {
-                $updateItemStock    = true;
+            if ($updateItemStock) {
                 $noUpdateAttributes = false;
             } else {
                 // Never update attributes stock when items stock is not updated
                 $noUpdateAttributes = true;
             }
-            // Specials have to be reduced always
-            $noUpdateSpecials = false;
 
-            $this->updateItemStock($orderItem, $updateItemStock, $noUpdateAttributes, $noUpdateSpecials);
+            $this->updateItemStock($orderItem, $updateItemStock, $noUpdateAttributes, false);
         }
 
         $coupons = $order->getExternalCoupons();
@@ -2763,8 +2760,7 @@ class ShopgatePluginGambioGX extends ShopgatePlugin
         ShopgateOrderItem $item,
         $updateParentStock = true,
         $ignoreAttributes = false,
-        $ignoreSpecials = false,
-        $products = array()
+        $ignoreSpecials = false
     ) {
         // Skip "coupon" and "payment_fee" items
         if ($item->getItemNumber() == 'COUPON' || $item->getItemNumber() == 'PAYMENT_FEE') {
