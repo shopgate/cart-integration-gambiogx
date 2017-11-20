@@ -1406,11 +1406,11 @@ class ShopgatePluginGambioGX extends ShopgatePlugin
 
         $shippingInfos = $order->getShippingInfos();
 
-        $orderData["shipping_method"] =
+        $orderData["shipping_method"]    =
             $shippingInfos->getDisplayName()
                 ? $shippingInfos->getDisplayName()
                 : MODULE_PAYMENT_SHOPGATE_TITLE_BLANKET;
-        $orderData["shipping_class"]  = $shippingInfos->getName()
+        $orderData["shipping_class"]     = $shippingInfos->getName()
             ? $shippingInfos->getName()
             : "flat_flat";
 
@@ -2248,8 +2248,10 @@ class ShopgatePluginGambioGX extends ShopgatePlugin
             $this->exchangeRate
         );
         $errors    = '';
+
         foreach ($order->getItems() as $orderItem) {
             $order_info = $this->jsonDecode($orderItem->getInternalOrderInfo(), true);
+            $updateItemStock = true;
 
             // The product is possibly stacked
             $stackQuantity = !empty($order_info['stack_quantity'])
@@ -2306,7 +2308,9 @@ class ShopgatePluginGambioGX extends ShopgatePlugin
 
             $shippingTime      = $dbProduct['shipping_status_name'];
             $internalOrderInfo = $this->jsonDecode($orderItem->getInternalOrderInfo(), true);
-            if (!empty($internalOrderInfo['is_property_attribute']) && !empty($dbProduct['use_properties_combis_shipping_time'])) {
+            if (!empty($internalOrderInfo['is_property_attribute'])
+                && !empty($dbProduct['use_properties_combis_shipping_time'])
+            ) {
                 $qry = xtc_db_query(
                     "SELECT `s`.`shipping_status_name` FROM " . TABLE_SHIPPING_STATUS . " AS `s`"
                     . " INNER JOIN " . TABLE_PRODUCTS_PROPERTIES_COMBIS . " AS `ppc`"
@@ -2642,7 +2646,7 @@ class ShopgatePluginGambioGX extends ShopgatePlugin
                     }
 
                     $combisQtySetting = $cartHelper->getPropertyStockSetting($item_number);
-                    list($updateItemsStock, $updatePropertiesStock) = $cartHelper->getStockReductionSettings(
+                    list($updateItemStock, $updatePropertiesStock) = $cartHelper->getStockReductionSettings(
                         $combisQtySetting
                     );
 
@@ -2712,23 +2716,21 @@ class ShopgatePluginGambioGX extends ShopgatePlugin
                     }
                 }
             }
+            $this->log('method: updateItemStock', ShopgateLogger::LOGTYPE_DEBUG);
+            if ($updateItemStock) {
+                $noUpdateAttributes = false;
+            } else {
+                // Never update attributes stock when items stock is not updated
+                $noUpdateAttributes = true;
+            }
+
+            $this->updateItemStock($orderItem, $updateItemStock, $noUpdateAttributes, false);
         }
 
         $coupons = $order->getExternalCoupons();
         foreach ($coupons as $coupon) {
             $couponModel->redeemCoupon($coupon, $order->getExternalCustomerId());
         }
-
-        $this->log('method: updateItemsStock', ShopgateLogger::LOGTYPE_DEBUG);
-        if (!isset($updateItemsStock)) {
-            $updateItemsStock = true;
-        } else {
-            // Never update attributes stock when items stock is not updated
-            $noUpdateAttributes = true;
-        }
-        // Specials have to be reduced always
-        $noUpdateSpecials = false;
-        $this->updateItemsStock($order, $updateItemsStock, $noUpdateAttributes, $noUpdateSpecials);
 
         if (!empty($errors)) {
             $this->log('db: save errors in history', ShopgateLogger::LOGTYPE_DEBUG);
@@ -2752,167 +2754,166 @@ class ShopgatePluginGambioGX extends ShopgatePlugin
     }
 
     /**
-     * @param ShopgateOrder $order
-     * @param bool          $updateParentStock
-     * @param bool          $ignoreAttributes
-     * @param bool          $ignoreSpecials
+     * @param ShopgateOrderItem $item
+     * @param bool              $updateParentStock
+     * @param bool              $ignoreAttributes
+     * @param bool              $ignoreSpecials
      */
-    private function updateItemsStock(
-        ShopgateOrder $order,
+    private function updateItemStock(
+        ShopgateOrderItem $item,
         $updateParentStock = true,
         $ignoreAttributes = false,
         $ignoreSpecials = false
     ) {
-        foreach ($order->getItems() as $item) {
-            // Skip "coupon" and "payment_fee" items
-            if ($item->getItemNumber() == 'COUPON' || $item->getItemNumber() == 'PAYMENT_FEE') {
-                continue;
-            }
+        // Skip "coupon" and "payment_fee" items
+        if ($item->getItemNumber() == 'COUPON' || $item->getItemNumber() == 'PAYMENT_FEE') {
+            return;
+        }
 
-            // Attribute ids are set inside the internal order info
-            $internalOrderInfo = $this->jsonDecode($item->getInternalOrderInfo(), true);
+        // Attribute ids are set inside the internal order info
+        $internalOrderInfo = $this->jsonDecode($item->getInternalOrderInfo(), true);
 
-            $usesProductsAttributes = false;
+        $usesProductsAttributes = false;
 
-            // Get id (parent id for child products)
-            $productId = $item->getItemNumber();
-            if (!empty($internalOrderInfo['base_item_number'])) {
-                $productId              = $internalOrderInfo['base_item_number'];
-                $usesProductsAttributes = true;
-            }
+        // Get id (parent id for child products)
+        $productId = $item->getItemNumber();
+        if (!empty($internalOrderInfo['base_item_number'])) {
+            $productId              = $internalOrderInfo['base_item_number'];
+            $usesProductsAttributes = true;
+        }
 
-            $itemOptions = $item->getOptions();
-            if (!empty($itemOptions)) {
-                $usesProductsAttributes = true;
-            }
+        $itemOptions = $item->getOptions();
+        if (!empty($itemOptions)) {
+            $usesProductsAttributes = true;
+        }
 
-            // Update "products_ordered" field that is used to display all bestsellers (always update this)
-            $qry
-                = "
+        // Update "products_ordered" field that is used to display all bestsellers (always update this)
+        $qry
+            = "
                 UPDATE `" . TABLE_PRODUCTS . "` AS `p`
                     SET `p`.`products_ordered` = `p`.`products_ordered` + " . ($item->getQuantity()) . "
                 WHERE `p`.`products_id` = '{$productId}'
             ;";
-            xtc_db_query($qry);
+        xtc_db_query($qry);
 
-            // Update products stock if reduction enabled
-            if (STOCK_LIMITED == 'true' && $updateParentStock) {
-                // Reduce products stock
-                $qry
-                    = "
+        // Update products stock if reduction enabled
+        if (STOCK_LIMITED == 'true' && $updateParentStock) {
+            // Reduce products stock
+            $qry
+                = "
                     UPDATE `" . TABLE_PRODUCTS . "` AS `p`
                         SET `p`.`products_quantity` = `p`.`products_quantity` - {$item->getQuantity()}
                     WHERE `p`.`products_id` = '{$productId}'
                 ;";
-                xtc_db_query($qry);
+            xtc_db_query($qry);
 
-                $qry        = "select products_quantity FROM `" . TABLE_PRODUCTS
-                    . "` AS `p` WHERE `p`.`products_id` = '{$productId}';";
-                $result     = xtc_db_query($qry);
-                $result     = xtc_db_fetch_array($result);
-                $stock_left = $result["products_quantity"];
+            $qry        = "select products_quantity FROM `" . TABLE_PRODUCTS
+                . "` AS `p` WHERE `p`.`products_id` = '{$productId}';";
+            $result     = xtc_db_query($qry);
+            $result     = xtc_db_fetch_array($result);
+            $stock_left = $result["products_quantity"];
 
-                if ($stock_left <= STOCK_REORDER_LEVEL) {
-                    $gm_get_products_name = xtc_db_query(
-                        "SELECT products_name
+            if ($stock_left <= STOCK_REORDER_LEVEL) {
+                $gm_get_products_name = xtc_db_query(
+                    "SELECT products_name
                             FROM products_description
                             WHERE
                                 products_id = '" . xtc_get_prid($productId) . "'
                                 AND language_id = '" . $_SESSION['languages_id'] . "'"
-                    );
-                    $gm_stock_data        = xtc_db_fetch_array($gm_get_products_name);
+                );
+                $gm_stock_data        = xtc_db_fetch_array($gm_get_products_name);
 
-                    $gm_subject = GM_OUT_OF_STOCK_NOTIFY_TEXT . ' ' . $gm_stock_data['products_name'];
-                    $gm_body    = GM_OUT_OF_STOCK_NOTIFY_TEXT . ': ' . (double)$stock_left . "\n\n" .
-                        HTTP_SERVER . DIR_WS_CATALOG . 'product_info.php?info=p' . xtc_get_prid($productId);
-                    $gm_body    = $this->stringToUtf8($gm_body, $this->config->getEncoding());
+                $gm_subject = GM_OUT_OF_STOCK_NOTIFY_TEXT . ' ' . $gm_stock_data['products_name'];
+                $gm_body    = GM_OUT_OF_STOCK_NOTIFY_TEXT . ': ' . (double)$stock_left . "\n\n" .
+                    HTTP_SERVER . DIR_WS_CATALOG . 'product_info.php?info=p' . xtc_get_prid($productId);
+                $gm_body    = $this->stringToUtf8($gm_body, $this->config->getEncoding());
 
-                    // send mail
-                    $this->log("seding information via email about low stock", ShopgateLogger::LOGTYPE_DEBUG);
-                    xtc_php_mail(
-                        STORE_OWNER_EMAIL_ADDRESS,
-                        STORE_NAME,
-                        STORE_OWNER_EMAIL_ADDRESS,
-                        STORE_NAME,
-                        '',
-                        STORE_OWNER_EMAIL_ADDRESS,
-                        STORE_NAME,
-                        '',
-                        '',
-                        $gm_subject,
-                        nl2br(htmlentities($gm_body)),
-                        $gm_body
-                    );
-                }
+                // send mail
+                $this->log("seding information via email about low stock", ShopgateLogger::LOGTYPE_DEBUG);
+                xtc_php_mail(
+                    STORE_OWNER_EMAIL_ADDRESS,
+                    STORE_NAME,
+                    STORE_OWNER_EMAIL_ADDRESS,
+                    STORE_NAME,
+                    '',
+                    STORE_OWNER_EMAIL_ADDRESS,
+                    STORE_NAME,
+                    '',
+                    '',
+                    $gm_subject,
+                    nl2br(htmlentities($gm_body)),
+                    $gm_body
+                );
+            }
 
-                // Deactivate product if checkout is not allowed and the stock level reaches zero
-                if (STOCK_ALLOW_CHECKOUT == 'false') {
-                    // gambiogx has an additional constant that tells if the product may be deactivated (GM_SET_OUT_OF_STOCK_PRODUCTS)
-                    if (GM_SET_OUT_OF_STOCK_PRODUCTS == 'true') { // don't update if defined and not true
-                        $qry
-                            = "
+            // Deactivate product if checkout is not allowed and the stock level reaches zero
+            if (STOCK_ALLOW_CHECKOUT == 'false') {
+                // gambiogx has an additional constant that tells if the product may be deactivated (GM_SET_OUT_OF_STOCK_PRODUCTS)
+                if (GM_SET_OUT_OF_STOCK_PRODUCTS == 'true') { // don't update if defined and not true
+                    $qry
+                        = "
                             UPDATE `" . TABLE_PRODUCTS . "` AS `p`
                                 SET `p`.`products_status` = '0'
                             WHERE `p`.`products_id` = '{$productId}' AND `p`.`products_quantity` <= 0
                         ;";
-                        xtc_db_query($qry);
-                    }
+                    xtc_db_query($qry);
                 }
             }
+        }
 
-            // Attribute items also need to be reduced in stock
-            if ($usesProductsAttributes && !$ignoreAttributes) {
-                // Build additional SQL snippets to update the attributes stock (not using the products_attributes_id because they all change on each update of any attribute in the backend of the shoppingsystem)
-                $attributeSQLQueryParts = array();
-                if (!empty($internalOrderInfo['base_item_number'])) {
-                    for ($i = 1; $i <= 10; $i++) {
-                        if (!empty($internalOrderInfo["attribute_{$i}"])) {
-                            $tmpAttr = $internalOrderInfo["attribute_{$i}"];
-                            if (!is_array($tmpAttr)) {
-                                $attributeSQLQueryParts[] = " ATTRIBUTES_ID='{$tmpAttr}'";
-                            } else {
-                                // Only the first element is relevant since there can only be one per attribute-number
-                                reset($tmpAttr);
-                                $attributeSQLQueryParts[] = 'OPTIONS_ID=\'' . $tmpAttr[key($tmpAttr)]['options_id']
-                                    . '\' AND OPTIONS_VALUES_ID=\''
-                                    . $tmpAttr[key($tmpAttr)]['options_values_id'] . '\'';
-                            }
+        // Attribute items also need to be reduced in stock
+        if ($usesProductsAttributes && !$ignoreAttributes) {
+            // Build additional SQL snippets to update the attributes stock (not using the products_attributes_id because they all change on each update of any attribute in the backend of the shoppingsystem)
+            $attributeSQLQueryParts = array();
+            if (!empty($internalOrderInfo['base_item_number'])) {
+                for ($i = 1; $i <= 10; $i++) {
+                    if (!empty($internalOrderInfo["attribute_{$i}"])) {
+                        $tmpAttr = $internalOrderInfo["attribute_{$i}"];
+                        if (!is_array($tmpAttr)) {
+                            $attributeSQLQueryParts[] = " ATTRIBUTES_ID='{$tmpAttr}'";
+                        } else {
+                            // Only the first element is relevant since there can only be one per attribute-number
+                            reset($tmpAttr);
+                            $attributeSQLQueryParts[] = 'OPTIONS_ID=\'' . $tmpAttr[key($tmpAttr)]['options_id']
+                                . '\' AND OPTIONS_VALUES_ID=\''
+                                . $tmpAttr[key($tmpAttr)]['options_values_id'] . '\'';
                         }
                     }
-                } else {
-                    // Attributes was exported as options
-                    foreach ($itemOptions as $itemOption) {
-                        $attributeSQLQueryParts[] =
-                            'OPTIONS_ID=\'' . $itemOption->getOptionNumber() . '\' AND OPTIONS_VALUES_ID=\''
-                            . $itemOption->getValueNumber()
-                            . '\'';
-                    }
                 }
-                if (!empty($attributeSQLQueryParts)) {
-                    // Attribute stock is ALWAYS reduced (no matter what is set as STOCK_LIMITED or the other constants)!
-                    $attributeSQLConditionSnippet = '(' . str_replace(
-                            array('OPTIONS_ID', 'OPTIONS_VALUES_ID', 'ATTRIBUTES_ID'),
-                            array('`pa`.`options_id`', '`pa`.`options_values_id`', '`pa`.`products_attributes_id`'),
-                            implode(') OR (', $attributeSQLQueryParts)
-                        ) . ')';
+            } else {
+                // Attributes was exported as options
+                foreach ($itemOptions as $itemOption) {
+                    $attributeSQLQueryParts[] =
+                        'OPTIONS_ID=\'' . $itemOption->getOptionNumber() . '\' AND OPTIONS_VALUES_ID=\''
+                        . $itemOption->getValueNumber()
+                        . '\'';
+                }
+            }
+            if (!empty($attributeSQLQueryParts)) {
+                // Attribute stock is ALWAYS reduced (no matter what is set as STOCK_LIMITED or the other constants)!
+                $attributeSQLConditionSnippet = '(' . str_replace(
+                        array('OPTIONS_ID', 'OPTIONS_VALUES_ID', 'ATTRIBUTES_ID'),
+                        array('`pa`.`options_id`', '`pa`.`options_values_id`', '`pa`.`products_attributes_id`'),
+                        implode(') OR (', $attributeSQLQueryParts)
+                    ) . ')';
 
-                    // Update attributes stock
-                    $qry
-                        = "
+                // Update attributes stock
+                $qry
+                    = "
                         UPDATE `" . TABLE_PRODUCTS_ATTRIBUTES . "` AS `pa`
                             SET `pa`.`attributes_stock` = `pa`.`attributes_stock` - {$item->getQuantity()}
                         WHERE `pa`.`products_id` = '{$productId}'
                             AND ({$attributeSQLConditionSnippet})
                     ;";
-                    xtc_db_query($qry);
-                }
+                xtc_db_query($qry);
+            }
 
-                for ($i = 1; ($i <= 10 && !empty($internalOrderInfo["attribute_{$i}"])); $i++) {
-                    foreach ($internalOrderInfo["attribute_{$i}"] as $attribute) {
-                        $optionId                = $attribute["options_id"];
-                        $optionValueId           = $attribute["options_values_id"];
-                        $gm_get_attributes_stock = xtc_db_query(
-                            "SELECT
+            for ($i = 1; ($i <= 10 && !empty($internalOrderInfo["attribute_{$i}"])); $i++) {
+                foreach ($internalOrderInfo["attribute_{$i}"] as $attribute) {
+                    $optionId                = $attribute["options_id"];
+                    $optionValueId           = $attribute["options_values_id"];
+                    $gm_get_attributes_stock = xtc_db_query(
+                        "SELECT
                                                             pd.products_name,
                                                             pa.attributes_stock,
                                                             po.products_options_name,
@@ -2931,66 +2932,66 @@ class ShopgatePluginGambioGX extends ShopgatePlugin
                                                             AND pov.language_id = '" . $this->languageId . "'
                                                             AND pd.products_id = '" . $productId . "'
                                                             AND pd.language_id = '" . $this->languageId . "'"
-                        );
-                        if (xtc_db_num_rows($gm_get_attributes_stock) == 1) {
-                            $gm_attributes_stock_data = xtc_db_fetch_array($gm_get_attributes_stock);
+                    );
+                    if (xtc_db_num_rows($gm_get_attributes_stock) == 1) {
+                        $gm_attributes_stock_data = xtc_db_fetch_array($gm_get_attributes_stock);
 
-                            if ($gm_attributes_stock_data['attributes_stock'] <= STOCK_REORDER_LEVEL) {
-                                $gm_subject =
-                                    GM_OUT_OF_STOCK_NOTIFY_TEXT . ' ' . $gm_attributes_stock_data['products_name']
-                                    . ' - '
-                                    . $gm_attributes_stock_data['products_options_name'] . ': '
-                                    . $gm_attributes_stock_data['products_options_values_name'];
-                                $gm_body    = GM_OUT_OF_STOCK_NOTIFY_TEXT . ': '
-                                    . (double)$gm_attributes_stock_data['attributes_stock'] . ' ('
-                                    . $gm_attributes_stock_data['products_name'] . ' - '
-                                    . $gm_attributes_stock_data['products_options_name'] . ': '
-                                    . $gm_attributes_stock_data['products_options_values_name'] . ")\n\n" .
-                                    HTTP_SERVER . DIR_WS_CATALOG . 'product_info.php?info=p' . xtc_get_prid(
-                                        $order->products[$i]['id']
-                                    );
-
-                                $gm_body = $this->stringToUtf8($gm_body, $this->config->getEncoding());
-                                xtc_php_mail(
-                                    STORE_OWNER_EMAIL_ADDRESS,
-                                    STORE_NAME,
-                                    STORE_OWNER_EMAIL_ADDRESS,
-                                    STORE_NAME,
-                                    '',
-                                    STORE_OWNER_EMAIL_ADDRESS,
-                                    STORE_NAME,
-                                    '',
-                                    '',
-                                    $gm_subject,
-                                    nl2br(htmlentities($gm_body)),
-                                    $gm_body
+                        if ($gm_attributes_stock_data['attributes_stock'] <= STOCK_REORDER_LEVEL) {
+                            $gm_subject =
+                                GM_OUT_OF_STOCK_NOTIFY_TEXT . ' ' . $gm_attributes_stock_data['products_name']
+                                . ' - '
+                                . $gm_attributes_stock_data['products_options_name'] . ': '
+                                . $gm_attributes_stock_data['products_options_values_name'];
+                            $gm_body    = GM_OUT_OF_STOCK_NOTIFY_TEXT . ': '
+                                . (double)$gm_attributes_stock_data['attributes_stock'] . ' ('
+                                . $gm_attributes_stock_data['products_name'] . ' - '
+                                . $gm_attributes_stock_data['products_options_name'] . ': '
+                                . $gm_attributes_stock_data['products_options_values_name'] . ")\n\n" .
+                                HTTP_SERVER . DIR_WS_CATALOG . 'product_info.php?info=p' . xtc_get_prid(
+                                    $item->getItemNumber()
                                 );
-                            }
+
+                            $gm_body = $this->stringToUtf8($gm_body, $this->config->getEncoding());
+                            xtc_php_mail(
+                                STORE_OWNER_EMAIL_ADDRESS,
+                                STORE_NAME,
+                                STORE_OWNER_EMAIL_ADDRESS,
+                                STORE_NAME,
+                                '',
+                                STORE_OWNER_EMAIL_ADDRESS,
+                                STORE_NAME,
+                                '',
+                                '',
+                                $gm_subject,
+                                nl2br(htmlentities($gm_body)),
+                                $gm_body
+                            );
                         }
                     }
                 }
             }
+        }
 
-            // Specials stock and active status
-            if (!empty($internalOrderInfo['is_special_price']) && !$ignoreSpecials) {
-                // Always update specials quantity if it is a special
-                $qry
-                    = "
+        // Specials stock and active status
+        if (!empty($internalOrderInfo['is_special_price']) && !$ignoreSpecials) {
+            // Always update specials quantity if it is a special
+            $qry
+                = "
                     UPDATE `" . TABLE_SPECIALS . "` AS `s`
                         SET `s`.`specials_quantity` = `s`.`specials_quantity` - {$item->getQuantity()}
                     WHERE `s`.`products_id` = '{$productId}'
                 ;";
-                xtc_db_query($qry);
+            xtc_db_query($qry);
 
-                $reduceQuantitySqlSnippet = '';
-                if (STOCK_CHECK == 'true') {
-                    // only if stock check is active we have to deactivate specials
-                    $reduceQuantitySqlSnippet = " OR `s`.specials_quantity <= 0 AND `s`.`products_id` = '{$productId}'";
-                }
+            $reduceQuantitySqlSnippet = '';
+            if (STOCK_CHECK == 'true') {
+                // only if stock check is active we have to deactivate specials
+                $reduceQuantitySqlSnippet = " OR `s`.specials_quantity <= 0 AND `s`.`products_id` = '{$productId}'";
+            }
 
-                // Always deactivate specials that have turned to a value equal to or less than zero and deactivate all specials that are expired
-                $qry
-                    = "
+            // Always deactivate specials that have turned to a value equal to or less than zero and deactivate all specials that are expired
+            $qry
+                = "
                     UPDATE `" . TABLE_SPECIALS . "` AS `s`
                         SET `s`.`status` = 0
                     WHERE
@@ -2999,8 +3000,7 @@ class ShopgatePluginGambioGX extends ShopgatePlugin
                             (`s`.`expires_date` < NOW() AND `s`.`expires_date` > '1000-01-01 00:00:00' AND `s`.`expires_date` IS NOT NULL
                         " . $reduceQuantitySqlSnippet . ")
                 ;";
-                xtc_db_query($qry);
-            }
+            xtc_db_query($qry);
         }
     }
 
