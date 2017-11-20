@@ -3003,7 +3003,6 @@ class ShopgatePluginGambioGX extends ShopgatePlugin
                 ;";
             xtc_db_query($qry);
         }
-
     }
 
     /**
