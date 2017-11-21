@@ -618,18 +618,22 @@ class ShopgateItemModel extends Shopgate_Model_Catalog_Product
 
         if (!empty($product['products_image'])) {
             if (file_exists(DIR_FS_CATALOG . DIR_WS_ORIGINAL_IMAGES . $product['products_image'])) {
-                $images[] = $this->getFilePath($product['products_image'], DIR_WS_ORIGINAL_IMAGES);
+                $images[] = $this->getFilePath(urlencode($product['products_image']), DIR_WS_ORIGINAL_IMAGES);
             } elseif (file_exists(DIR_FS_CATALOG . DIR_WS_POPUP_IMAGES . $product['products_image'])) {
-                $images[] = $this->getFilePath($product['products_image'], DIR_WS_POPUP_IMAGES);
+                $images[] = $this->getFilePath(urlencode($product['products_image']), DIR_WS_POPUP_IMAGES);
+            } elseif (file_exists(DIR_FS_CATALOG . DIR_WS_INFO_IMAGES . $product['products_image'])) {
+                $images[] = $this->getFilePath(urlencode($product['products_image']), DIR_WS_INFO_IMAGES);
             }
         }
 
         $query = xtc_db_query($qry);
         while ($image = xtc_db_fetch_array($query)) {
             if (file_exists(DIR_FS_CATALOG . DIR_WS_ORIGINAL_IMAGES . $image['image_name'])) {
-                $images[] = $this->getFilePath($image['image_name'], DIR_WS_ORIGINAL_IMAGES);
+                $images[] = $this->getFilePath(urlencode($image['image_name']), DIR_WS_ORIGINAL_IMAGES);
             } elseif (file_exists(DIR_FS_CATALOG . DIR_WS_POPUP_IMAGES . $image['image_name'])) {
-                $images[] = $this->getFilePath($image['image_name'], DIR_WS_POPUP_IMAGES);
+                $images[] = $this->getFilePath(urlencode($image['image_name']), DIR_WS_POPUP_IMAGES);
+            } elseif (file_exists(DIR_FS_CATALOG . DIR_WS_INFO_IMAGES . $image['image_name'])) {
+                $images[] = $this->getFilePath(urlencode($image['image_name']), DIR_WS_INFO_IMAGES);
             }
         }
 
