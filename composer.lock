@@ -8,16 +8,16 @@
     "packages": [
         {
             "name": "shopgate/cart-integration-sdk",
-            "version": "2.9.70",
+            "version": "2.9.71",
             "source": {
                 "type": "git",
                 "url": "https://github.com/shopgate/cart-integration-sdk.git",
-                "reference": "4b82a99aac1d373585a115fd79bb333af7a37285"
+                "reference": "3da62ab14638cd915a5ec9ce4b2d00eaa223375b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/shopgate/cart-integration-sdk/zipball/4b82a99aac1d373585a115fd79bb333af7a37285",
-                "reference": "4b82a99aac1d373585a115fd79bb333af7a37285",
+                "url": "https://api.github.com/repos/shopgate/cart-integration-sdk/zipball/3da62ab14638cd915a5ec9ce4b2d00eaa223375b",
+                "reference": "3da62ab14638cd915a5ec9ce4b2d00eaa223375b",
                 "shasum": ""
             },
             "require": {
@@ -123,7 +123,7 @@
             ],
             "description": "A PHP framework supporting the implementation of the Shopgate Plugin API and abstracting access to the Shopgate Merchant API.",
             "homepage": "https://github.com/shopgate/cart-integration-sdk",
-            "time": "2017-10-24T10:13:34+00:00"
+            "time": "2017-11-21T16:30:08+00:00"
         },
         {
             "name": "zendframework/zend-json",
