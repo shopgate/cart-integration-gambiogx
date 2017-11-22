@@ -10,6 +10,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 - wrong total class for cash on delivery order fees, now using ot_cod_fee 
 - added check for Gambio version so order weight total is only added when the Gambio version supports this.
 - stock update when orders contains both a simple product and a product with a property
+- Shopgate plugin can now find product images that are stored in the info_images directory
 
 ## [2.9.52] - 2017-11-06
 ### Added
