@@ -5,12 +5,19 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
+
+## [2.9.53] - 2017-11-22
 ### Fixed
 - incompatibility with PHP 7.1.x, which caused missing attributes on order import
 - wrong total class for cash on delivery order fees, now using ot_cod_fee 
-- added check for Gambio version so order weight total is only added when the Gambio version supports this.
 - stock update when orders contains both a simple product and a product with a property
 - Shopgate plugin can now find product images that are stored in the info_images directory
+
+### Added
+- check for Gambio version so order weight total is only added when the Gambio version supports this
+
+### Changed
+- uses Shopgate Cart Integration SDK 2.9.71
 
 ## [2.9.52] - 2017-11-06
 ### Added
@@ -623,5 +630,6 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 - supports remote cron jobs via Shopgate Plugin API
 - remote cron job for synchronization of order status at Shopgate
 
-[Unreleased]: https://github.com/shopgate/cart-integration-gambiogx/compare/2.9.52...HEAD
+[Unreleased]: https://github.com/shopgate/cart-integration-gambiogx/compare/2.9.53...HEAD
+[2.9.53]: https://github.com/shopgate/cart-integration-gambiogx/compare/2.9.52...2.9.53
 [2.9.52]: https://github.com/shopgate/cart-integration-gambiogx/compare/2.9.51...2.9.52
