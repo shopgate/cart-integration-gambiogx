@@ -3069,7 +3069,7 @@ class ShopgatePluginGambioGX extends ShopgatePlugin
             $paymentInfos    = $order->getPaymentInfos();
             $orderTotalClass = $order->getPaymentMethod() == ShopgateOrder::COD
                 ? 'ot_cod_fee'
-                : 'ot_shipping';
+                : 'ot_payment';
 
             $ordersTotal               = array();
             $ordersTotal["orders_id"]  = $dbOrderId;

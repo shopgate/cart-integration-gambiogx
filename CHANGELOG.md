@@ -18,6 +18,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ### Changed
 - uses Shopgate Cart Integration SDK 2.9.71
+- Changed the class with which payment fees are added to the order_totals db table from ot_shipping to ot_payment
 
 ## [2.9.52] - 2017-11-06
 ### Added
