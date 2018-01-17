@@ -5,6 +5,8 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
+### Fixed
+- fixed path to shopgate cart integration sdk config folder
 
 ## [2.9.53] - 2017-11-22
 ### Fixed
