@@ -279,7 +279,7 @@ class ShopgateConfigGambioGx extends ShopgateConfig
      */
     private function getLegacyConfigFilePath($fileName = self::DEFAULT_CONFIGURATION_FILE_NAME)
     {
-        return __DIR__ . '/../shopgate_library/config/' . $fileName;
+        return __DIR__ . '/../vendor/shopgate/cart-integration-sdk/config/' . $fileName;
     }
 
     /**
