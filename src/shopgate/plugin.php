@@ -4537,7 +4537,7 @@ class ShopgatePluginGambioGX extends ShopgatePlugin
             );
 
             // Stock quantity must be divided by the stack quantity
-            $product['stock_quantity'] = intval( floor($product['stock_quantity'] / (float) $stackQuantity ), 10);
+            $product['stock_quantity'] = intval(floor($product['stock_quantity'] / (float) $stackQuantity), 10);
 
             // Price must be multiplied by the stack quantity
             $product['unit_amount'] *= $stackQuantity;
