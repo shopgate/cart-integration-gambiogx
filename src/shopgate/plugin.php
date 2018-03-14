@@ -2357,7 +2357,7 @@ class ShopgatePluginGambioGX extends ShopgatePlugin
                         $orderItem->getName()
                     ),
                 // The name contains additional text on quantity-stacked products
-                "products_price"         => $orderItem->getUnitAmountWithTax() / floatval($stackQuantity),
+                "products_price"         => $orderItem->getUnitAmountWithTax() / (float) $stackQuantity,
                 // calculate the price of a single, non stacked, product
                 "products_discount_made" => 0,
                 "final_price"            => $orderItem->getQuantity() * ($orderItem->getUnitAmountWithTax()),
@@ -2380,6 +2380,7 @@ class ShopgatePluginGambioGX extends ShopgatePlugin
                 /** @var ShopgateOrderItemInput[] $gxCustomizerInputs */
                 $nonGxCustomizerInputs = array();
                 // do only if the customizer is available (customizer set table exists in that case)
+                /** @noinspection IssetArgumentExistenceInspection */
                 if (!isset($gxCustomizerEnable)) {
                     $gxCustomizerEnable = $dbHelper->tableExists('gm_gprint_surfaces_groups');
                 }
@@ -2397,6 +2398,7 @@ class ShopgatePluginGambioGX extends ShopgatePlugin
                 if (!empty($gxCustomizerInputs)) {
                     // load gx customizer sets first to be able to create a structure for the customizer order structure
                     // do only once, since it loads all customizer sets in a single call (data is constant after loading and this call is inside a loop)
+                    /** @noinspection IssetArgumentExistenceInspection */
                     if (empty($gxCustomizerSets)) {
                         $gxCustomizerSets = $itemModel->getGxCustomizerSets();
                     }
@@ -4238,6 +4240,7 @@ class ShopgatePluginGambioGX extends ShopgatePlugin
                     $itemArr = array_merge($itemArr, $variations);
 
                     if (!empty($gmPriceStatusItemFields)) {
+                        /** @noinspection AdditionOperationOnArraysInspection */
                         $itemArr = $gmPriceStatusItemFields + $itemArr;
                     }
 
@@ -4534,7 +4537,7 @@ class ShopgatePluginGambioGX extends ShopgatePlugin
             );
 
             // Stock quantity must be divided by the stack quantity
-            $product['stock_quantity'] = intval(floor($product['stock_quantity'] / floatval($stackQuantity)), 10);
+            $product['stock_quantity'] = intval( floor($product['stock_quantity'] / (float) $stackQuantity ), 10);
 
             // Price must be multiplied by the stack quantity
             $product['unit_amount'] *= $stackQuantity;
