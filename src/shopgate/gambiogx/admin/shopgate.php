@@ -29,7 +29,7 @@ define("SHOPGATE_LINK_WIKI", "http://support.shopgate.com/hc/en-us/articles/2027
 (defined('_VALID_XTC') || defined('_GM_VALID_CALL')) or die('Direct Access to this location is not allowed.');
 
 if (file_exists(DIR_FS_CATALOG . '/shopgate/vendor/autoload.php')) {
-    require(DIR_FS_CATALOG . '/shopgate/vendor/autoload.php');
+    include_once(DIR_FS_CATALOG . '/shopgate/vendor/autoload.php');
 }
 
 require(DIR_FS_CATALOG . '/shopgate/gambiogx/shopgate_config.php');
