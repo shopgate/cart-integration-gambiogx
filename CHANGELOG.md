@@ -5,13 +5,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
+
+## [2.9.54] - 2018-03-14
 ### Fixed
 - fixed path to shopgate cart integration sdk config folder
+
+### Changed
+- changed the class with which payment fees are added to the order_totals db table from ot_shipping to ot_payment
 
 ## [2.9.53] - 2017-11-22
 ### Fixed
 - incompatibility with PHP 7.1.x, which caused missing attributes on order import
-- wrong total class for cash on delivery order fees, now using ot_cod_fee 
+- wrong total class for cash on delivery order fees, now using ot_cod_fee
 - stock update when orders contains both a simple product and a product with a property
 - Shopgate plugin can now find product images that are stored in the info_images directory
 
@@ -20,7 +25,6 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ### Changed
 - uses Shopgate Cart Integration SDK 2.9.71
-- Changed the class with which payment fees are added to the order_totals db table from ot_shipping to ot_payment
 
 ## [2.9.52] - 2017-11-06
 ### Added
@@ -29,7 +33,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 ### Fixed
 - sort order of products within categories with show sub products setting
 - coupon being given for deactivated customer group discount
-- total weight order now added to desktop order 
+- total weight order now added to desktop order
 
 ### Changed
 - Shopgate Cart Integration SDK version to 2.9.70
@@ -633,6 +637,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 - supports remote cron jobs via Shopgate Plugin API
 - remote cron job for synchronization of order status at Shopgate
 
-[Unreleased]: https://github.com/shopgate/cart-integration-gambiogx/compare/2.9.53...HEAD
+[Unreleased]: https://github.com/shopgate/cart-integration-gambiogx/compare/2.9.54...HEAD
+[2.9.54]: https://github.com/shopgate/cart-integration-gambiogx/compare/2.9.53...2.9.54
 [2.9.53]: https://github.com/shopgate/cart-integration-gambiogx/compare/2.9.52...2.9.53
 [2.9.52]: https://github.com/shopgate/cart-integration-gambiogx/compare/2.9.51...2.9.52

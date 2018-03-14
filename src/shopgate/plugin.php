@@ -21,7 +21,7 @@
  * @copyright Shopgate Inc
  * @license   http://www.gnu.org/licenses/gpl-2.0.html GNU General Public License, Version 2.0
  */
-define("SHOPGATE_PLUGIN_VERSION", "2.9.53");
+define("SHOPGATE_PLUGIN_VERSION", "2.9.54");
 
 /**
  * GambioGX Plugin for Shopgate
@@ -397,6 +397,7 @@ class ShopgatePluginGambioGX extends ShopgatePlugin
             include(dirname(__FILE__) . '/../release_info.php');
         }
 
+        /** @noinspection IssetArgumentExistenceInspection */
         if (isset($gx_version)) {
             $aInfo['shop_version'] = $gx_version;
         }
