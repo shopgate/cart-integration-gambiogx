@@ -217,6 +217,7 @@ class ShopgateCustomerModel extends ShopgateObject
             . " date_format(customer.customers_dob,'%Y-%m-%d') as customers_birthday,"
             . " customer.customers_telephone,"
             . " customer.customers_email_address,"
+            . " customer.account_type,"
 
             // additional information for password verification, default address etc.
             . " customer.customers_password,"
@@ -229,7 +230,8 @@ class ShopgateCustomerModel extends ShopgateObject
             . " ON customer.customers_status = status.customers_status_id"
             . " AND status.language_id = " . $this->languageId
 
-            . " WHERE customers_email_address = '" . xtc_db_input($user) . "';";
+            . " WHERE customers_email_address = '" . xtc_db_input($user) . "'"
+            . " AND account_type != '1';";
 
         // user exists?
         return xtc_db_query($qry);
