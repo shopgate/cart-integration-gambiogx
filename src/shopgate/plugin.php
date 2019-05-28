@@ -199,7 +199,7 @@ class ShopgatePluginGambioGX extends ShopgatePlugin
         $userExistResult =
             xtc_db_query(
                 "SELECT count(1) AS exist FROM " . TABLE_CUSTOMERS
-                . " AS c WHERE c.customers_email_address = '{$user}';"
+                . " AS c WHERE c.customers_email_address = '{$user}' AND account_type != '1';"
             );
         $userCount       = xtc_db_fetch_array($userExistResult);
         $userCount       = $userCount['exist'];
