@@ -7,6 +7,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 ## [Unreleased]
 ### Fixed
 - customer login, when a guest account exists with the same email address
+- customer registration, when a guest account exists with the same email address
 
 ## [2.9.54] - 2018-03-14
 ### Fixed
