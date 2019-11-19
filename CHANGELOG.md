@@ -9,6 +9,12 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 - customer login, when a guest account exists with the same email address
 - customer registration, when a guest account exists with the same email address
 
+### Added
+- support for Gambio > 3.9
+
+### Changed
+- uses Shopgate Cart Integration SDK 2.9.78
+
 ## [2.9.54] - 2018-03-14
 ### Fixed
 - fixed path to shopgate cart integration sdk config folder
