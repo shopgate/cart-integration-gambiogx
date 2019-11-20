@@ -5,7 +5,7 @@
   "license": "GPL-2.0",
   "config": {
     "platform": {
-      "php": "5.3.3"
+      "php": "5.4"
     },
     "vendor-dir": "src/shopgate/vendor"
   },
@@ -15,11 +15,14 @@
       "email": "interfaces@shopgate.com"
     }
   ],
+  "scripts": {
+    "test": "src/shopgate/vendor/bin/phpunit"
+  },
   "require": {
-    "php": ">=5.3",
+    "php": ">=5.4",
     "shopgate/cart-integration-sdk" : "~2.9.70"
   },
   "require-dev": {
-    "phpunit/phpunit": "4.8.10"
+    "phpunit/phpunit": "~4.8.10"
   }
 }
