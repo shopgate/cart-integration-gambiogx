@@ -11,7 +11,7 @@
 
 class ShopgateAdminApplicationTopExtender extends ShopgateAdminApplicationTopExtender_parent
 {
-    function proceed()
+    public function proceed()
     {
         parent::proceed();
 

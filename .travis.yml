@@ -12,10 +12,6 @@ script:
 jobs:
   include:
   - stage: Unit Test + Code Style Fixing
-    php: 5.4
-  - stage: Unit Test + Code Style Fixing
-    php: 5.5
-  - stage: Unit Test + Code Style Fixing
     php: 7.1
   - stage: Unit Test + Code Style Fixing
     php: 5.6
