@@ -31,10 +31,15 @@ class ShopgateShippingModel
      */
     public function getShippingCountriesFromConstants()
     {
-        $shippingQuery
-            = "SELECT c.configuration_value AS 'countries' 
+        if ($this->useLegacyConfigTable()) {
+            $shippingQuery = "SELECT c.configuration_value AS 'countries' 
                FROM " . TABLE_CONFIGURATION . " AS c 
                WHERE c.configuration_key LIKE 'MODULE_SHIPPING_%_COUNTRIES_%' AND c.configuration_value != ''";
+        } else {
+            $shippingQuery = "SELECT c.`value` AS 'countries' 
+               FROM " . TABLE_CONFIGURATION . " AS c 
+               WHERE c.`key` LIKE 'MODULE_SHIPPING_%_COUNTRIES_%' AND c.`value` != ''";
+        }
 
         return xtc_db_query($shippingQuery);
     }
@@ -48,9 +53,15 @@ class ShopgateShippingModel
      */
     public function getShippingConfigurationValuesByClassName($className)
     {
-        $query          = "SELECT c.configuration_key, c.configuration_value FROM "
-            . TABLE_CONFIGURATION . " AS c WHERE configuration_key like \"MODULE_SHIPPING_"
-            . strtoupper($className) . "%\" ;";
+        if ($this->useLegacyConfigTable()) {
+            $query = "SELECT c.configuration_key, c.configuration_value FROM "
+                . TABLE_CONFIGURATION . " AS c WHERE configuration_key like \"MODULE_SHIPPING_"
+                . strtoupper($className) . "%\" ;";
+        } else {
+            $query = "SELECT c.`key` AS configuration_key, c.`value` AS configuration_value FROM "
+                . TABLE_CONFIGURATION . " AS c WHERE configuration_key like \"MODULE_SHIPPING_"
+                . strtoupper($className) . "%\" ;";
+        }
         $result         = xtc_db_query($query);
         $shippingConfig = array();
 
@@ -59,5 +70,10 @@ class ShopgateShippingModel
         }
 
         return $shippingConfig;
+    }
+
+    private function useLegacyConfigTable()
+    {
+        return !(TABLE_CONFIGURATION === 'gx_configurations');
     }
 }

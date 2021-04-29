@@ -119,9 +119,13 @@ class ShopgateInstallHelper
             }
         }
 
-        $keyQuery =
-            'SELECT c.configuration_value AS val FROM ' . TABLE_CONFIGURATION . ' AS c WHERE c.configuration_key = "'
-            . self::SHOPGATE_CALLBACK_DATABASE_CONFIG_KEY . '" LIMIT 1;';
+        if ($this->useLegacyConfigTable()) {
+            $keyQuery = 'SELECT c.configuration_value AS val FROM ' . TABLE_CONFIGURATION . ' AS c
+                         WHERE c.configuration_key = "' . self::SHOPGATE_CALLBACK_DATABASE_CONFIG_KEY . '" LIMIT 1;';
+        } else {
+            $keyQuery = 'SELECT c.`value` AS val FROM ' . TABLE_CONFIGURATION . ' AS c
+                         WHERE c.`key` = "' . self::SHOPGATE_CALLBACK_DATABASE_CONFIG_KEY . '" LIMIT 1;';
+        }
         $result   = xtc_db_query($keyQuery);
         $row      = xtc_db_fetch_array($result);
 
@@ -129,9 +133,13 @@ class ShopgateInstallHelper
             return $row['val'];
         }
 
-        $tokenQuery = 'SELECT c.gm_value as token FROM gm_configuration as c WHERE c.gm_key = "SECURE_TOKEN" LIMIT 1;';
-        $result     = xtc_db_query($tokenQuery);
-        $row        = xtc_db_fetch_array($result);
+        try {
+            $tokenQuery = 'SELECT c.gm_value as token FROM gm_configuration as c WHERE c.gm_key = "SECURE_TOKEN" LIMIT 1;';
+            $result     = xtc_db_query($tokenQuery);
+            $row        = xtc_db_fetch_array($result);
+        } catch (Exception $e) {
+            $row = [];
+        }
 
         if (!empty($row['token']) && $row['token'] != 0) {
             $saltedHash = md5($row['token'] . self::SHOPGATE_CALLBACK_SALT);
@@ -160,9 +168,16 @@ class ShopgateInstallHelper
         if (file_put_contents($hashFile, $content) === false) { /*error*/
         }
 
-        $updateKeyQuery = 'UPDATE ' . TABLE_CONFIGURATION . ' AS c  SET c.configuration_value ="' . $saltedHash
-            . '" WHERE c.configuration_key = "'
-            . self::SHOPGATE_CALLBACK_DATABASE_CONFIG_KEY . '";';
+        if (!(TABLE_CONFIGURATION === 'gx_configurations')) {
+            $updateKeyQuery = 'UPDATE ' . TABLE_CONFIGURATION . ' AS c  SET c.configuration_value ="' . $saltedHash
+                . '" WHERE c.configuration_key = "'
+                . self::SHOPGATE_CALLBACK_DATABASE_CONFIG_KEY . '";';
+        } else {
+            $updateKeyQuery = 'UPDATE ' . TABLE_CONFIGURATION . ' AS c  SET c.`value` ="' . $saltedHash
+                . '" WHERE c.`key` = "'
+                . self::SHOPGATE_CALLBACK_DATABASE_CONFIG_KEY . '";';
+        }
+
 
         xtc_db_query($updateKeyQuery);
 
@@ -176,11 +191,19 @@ class ShopgateInstallHelper
      */
     private function getStoreHolderInformation()
     {
-        $keyQuery               = 'SELECT configuration_key,configuration_value FROM ' . TABLE_CONFIGURATION . ' as c
+        if ($this->useLegacyConfigTable()) {
+            $keyQuery = 'SELECT configuration_key, configuration_value FROM ' . TABLE_CONFIGURATION . ' as c
 						 WHERE c.configuration_key = "' . self::SHOPGATE_CALLBACK_DEFAULT_EMAIL_KEY . '"
 						 OR c.configuration_key    = "' . self::SHOPGATE_CALLBACK_DEFAULT_CONTACT_NAME_KEY . '" 
 						 OR c.configuration_key    = "' . self::SHOPGATE_CALLBACK_DEFAULT_STORE_NAME_KEY . '"
 						 OR c.configuration_key    = "' . self::SHOPGATE_CALLBACK_DEFAULT_STORE_NAME_ADDRESS_KEY . '";';
+        } else {
+            $keyQuery = 'SELECT `key` AS configuration_key, `value` AS configuration_value FROM ' . TABLE_CONFIGURATION . ' as c
+						 WHERE configuration_key = "' . self::SHOPGATE_CALLBACK_DEFAULT_EMAIL_KEY . '"
+						 OR configuration_key    = "' . self::SHOPGATE_CALLBACK_DEFAULT_CONTACT_NAME_KEY . '" 
+						 OR configuration_key    = "' . self::SHOPGATE_CALLBACK_DEFAULT_STORE_NAME_KEY . '"
+						 OR configuration_key    = "' . self::SHOPGATE_CALLBACK_DEFAULT_STORE_NAME_ADDRESS_KEY . '";';
+        }
         $result                 = xtc_db_query($keyQuery);
         $storeHolderInformation = array();
 
@@ -366,8 +389,13 @@ class ShopgateInstallHelper
      */
     private function getDefaultCurrency()
     {
-        $query  = 'SELECT configuration_value AS currency FROM ' . TABLE_CONFIGURATION . ' AS c
-				  	   where c.configuration_key = "' . self::SHOPGATE_CALLBACK_DEFAULT_CURRENCY_KEY . '"';
+        if ($this->useLegacyConfigTable()) {
+            $query = 'SELECT configuration_value AS currency FROM ' . TABLE_CONFIGURATION . ' AS c
+                      WHERE c.configuration_key = "' . self::SHOPGATE_CALLBACK_DEFAULT_CURRENCY_KEY . '"';
+        } else {
+            $query = 'SELECT `value` AS currency FROM ' . TABLE_CONFIGURATION . ' AS c
+                      WHERE c.`key` = "' . self::SHOPGATE_CALLBACK_DEFAULT_CURRENCY_KEY . '"';
+        }
         $result = xtc_db_query($query);
         $row    = xtc_db_fetch_array($result);
 
@@ -415,5 +443,10 @@ class ShopgateInstallHelper
         curl_close($curl);
 
         return true;
+    }
+
+    private function useLegacyConfigTable()
+    {
+        return !(TABLE_CONFIGURATION === 'gx_configurations');
     }
 }

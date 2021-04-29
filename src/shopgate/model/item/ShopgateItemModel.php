@@ -464,8 +464,10 @@ class ShopgateItemModel extends Shopgate_Model_Catalog_Product
                     `ppc`.`combi_quantity`,
                     `ppc`.`combi_weight`,
                     `ppc`.`combi_price_type`,
-                    `ppc`.`combi_price`,
-                    `ppc`.`combi_image`,"
+                    `ppc`.`combi_price`,"
+                . ($this->databaseHelper->checkColumn(TABLE_PRODUCTS_PROPERTIES_COMBIS, "combi_image")
+                    ? "`ppc`.`combi_image`,"
+                    : "")
                 . ($this->databaseHelper->checkColumn(TABLE_PRODUCTS_PROPERTIES_COMBIS, "combi_ean")
                     ? "`ppc`.`combi_ean`,"
                     : "") .

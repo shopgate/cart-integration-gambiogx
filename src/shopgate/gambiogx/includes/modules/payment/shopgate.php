@@ -60,7 +60,7 @@ class shopgate
     /**
      *
      */
-    public function shopgate()
+    public function __construct()
     {
         $this->code        = 'shopgate';
         $this->title       = MODULE_PAYMENT_SHOPGATE_TEXT_TITLE;
@@ -164,10 +164,15 @@ class shopgate
     public function check()
     {
         if (!isset($this->_check)) {
-            $check_query  = xtc_db_query(
-                "select configuration_value from " . TABLE_CONFIGURATION
-                . " where configuration_key = 'MODULE_PAYMENT_SHOPGATE_STATUS'"
-            );
+            if ($this->useLegacyConfigTable()) {
+                $qry = "select `configuration_value` from " . TABLE_CONFIGURATION
+                    . " where `configuration_key` = 'MODULE_PAYMENT_SHOPGATE_STATUS'";
+            } else {
+                $qry = "select `value` from " . TABLE_CONFIGURATION
+                    . " where `key` = 'configuration/MODULE_PAYMENT_SHOPGATE_STATUS'";
+            }
+
+            $check_query  = xtc_db_query($qry);
             $this->_check = xtc_db_num_rows($check_query);
         }
 
@@ -238,33 +243,58 @@ class shopgate
             define('TABLE_ORDERS_SHOPGATE_ORDER', 'orders_shopgate_order');
         }
 
-        xtc_db_query(
-            "delete from " . TABLE_CONFIGURATION
-            . " where configuration_key in ('MODULE_PAYMENT_SHOPGATE_STATUS', 'MODULE_PAYMENT_SHOPGATE_ALLOWED', 'MODULE_PAYMENT_SHOPGATE_ORDER_STATUS_ID')"
-        );
-        xtc_db_query(
-            "insert into " . TABLE_CONFIGURATION
-            . " ( configuration_key, configuration_value,  configuration_group_id, sort_order, set_function, date_added) values ('MODULE_PAYMENT_SHOPGATE_STATUS', 'True', '6', '"
-            . $this->sort_order . "', 'gm_cfg_select_option(array(\'True\', \'False\'), ', now())"
-        );
-        xtc_db_query(
-            "insert into " . TABLE_CONFIGURATION
-            . " ( configuration_key, configuration_value,  configuration_group_id, sort_order, date_added) values ('MODULE_PAYMENT_SHOPGATE_ALLOWED', '0',   '6', '"
-            . $this->sort_order . "', now())"
-        );
-        $result = xtc_db_query(
-            'select configuration_key,configuration_value from configuration as c where c.configuration_key = "'
-            . ShopgateInstallHelper::SHOPGATE_CALLBACK_DATABASE_CONFIG_KEY . '"'
-        );
+        if ($this->useLegacyConfigTable()) {
+            $qry = "delete from " . TABLE_CONFIGURATION
+                . " where configuration_key in ('MODULE_PAYMENT_SHOPGATE_STATUS', 'MODULE_PAYMENT_SHOPGATE_ALLOWED', 'MODULE_PAYMENT_SHOPGATE_ORDER_STATUS_ID')";
+        } else {
+            $qry = "delete from " . TABLE_CONFIGURATION
+                . " where `key` in ('configuration/MODULE_PAYMENT_SHOPGATE_STATUS', 'configuration/MODULE_PAYMENT_SHOPGATE_ALLOWED', 'configuration/MODULE_PAYMENT_SHOPGATE_ORDER_STATUS_ID')";
+        }
+        xtc_db_query($qry);
+        if ($this->useLegacyConfigTable()) {
+            $qry = "insert into " . TABLE_CONFIGURATION
+                 . " ( configuration_key, configuration_value,  configuration_group_id, sort_order, set_function, date_added) values ('MODULE_PAYMENT_SHOPGATE_STATUS', 'True', '6', '"
+                 . $this->sort_order . "', 'gm_cfg_select_option(array(\'True\', \'False\'), ', now())";
+        } else {
+            $qry = "insert into " . TABLE_CONFIGURATION
+                . " ( `key`, `value`,  legacy_group_id, sort_order) values ('configuration/MODULE_PAYMENT_SHOPGATE_STATUS', 'True', '6', '"
+                 . $this->sort_order . "')";
+        }
+        xtc_db_query($qry);
+        if ($this->useLegacyConfigTable()) {
+            $qry = "insert into " . TABLE_CONFIGURATION
+                . " ( configuration_key, configuration_value,  configuration_group_id, sort_order, date_added) values ('MODULE_PAYMENT_SHOPGATE_ALLOWED', '0',   '6', '"
+                . $this->sort_order . "', now())";
+        } else {
+            $qry = "insert into " . TABLE_CONFIGURATION
+                . " ( `key`, `value`,  `legacy_group_id`, `sort_order`) values ('configuration/MODULE_PAYMENT_SHOPGATE_ALLOWED', '0',   '6', '"
+                . $this->sort_order . "')";
+        }
+        xtc_db_query($qry);
+        if ($this->useLegacyConfigTable()) {
+            $qry = 'select configuration_key, configuration_value from ' . TABLE_CONFIGURATION . ' as c '
+                 . 'where c.configuration_key = "' . ShopgateInstallHelper::SHOPGATE_CALLBACK_DATABASE_CONFIG_KEY . '"';
+        } else {
+            $qry = 'select `key`, `value` from ' . TABLE_CONFIGURATION . ' as c '
+                 . 'where c.`key` = "' . ShopgateInstallHelper::SHOPGATE_CALLBACK_DATABASE_CONFIG_KEY . '"';
+        }
+        xtc_db_query($qry);
+        $result = xtc_db_query($qry);
         $row    = xtc_db_fetch_array($result);
 
         if (empty($row)) {
-            xtc_db_query(
-                "insert into " . TABLE_CONFIGURATION
-                . " ( configuration_key, configuration_value,  configuration_group_id, sort_order, date_added) values ('"
-                . ShopgateInstallHelper::SHOPGATE_CALLBACK_DATABASE_CONFIG_KEY . "'  , '0',   '6', '"
-                . $this->sort_order . "', now())"
-            );
+            if ($this->useLegacyConfigTable()) {
+                $qry = "insert into " . TABLE_CONFIGURATION
+                    . " ( configuration_key, configuration_value,  configuration_group_id, sort_order, date_added) values ('"
+                    . ShopgateInstallHelper::SHOPGATE_CALLBACK_DATABASE_CONFIG_KEY . "'  , '0',   '6', '"
+                    . $this->sort_order . "', now())";
+            } else {
+                $qry = "insert into " . TABLE_CONFIGURATION
+                    . " ( `key`, `value`,  `legacy_group_id`, `sort_order`) values ('"
+                    . ShopgateInstallHelper::SHOPGATE_CALLBACK_DATABASE_CONFIG_KEY . "'  , '0',   '6', '"
+                    . $this->sort_order . "')";
+            }
+            xtc_db_query($qry);
         }
         $this->installTable();
         $this->updateDatabase();
@@ -287,11 +317,16 @@ class shopgate
     public function remove()
     {
         // MODULE_PAYMENT_SHOPGATE_ORDER_STATUS_ID - Keep this on removing for old installation
-        xtc_db_query(
-            "delete from " . TABLE_CONFIGURATION
-            . " where configuration_key in ('MODULE_PAYMENT_SHOPGATE_STATUS', 'MODULE_PAYMENT_SHOPGATE_ALLOWED', 'MODULE_PAYMENT_SHOPGATE_ORDER_STATUS_ID')"
-        );
-        if (!$this->checkColumn("shopgate", TABLE_ADMIN_ACCESS)) {
+
+        if ($this->useLegacyConfigTable()) {
+            $qry = "delete from " . TABLE_CONFIGURATION
+                . " where configuration_key in ('MODULE_PAYMENT_SHOPGATE_STATUS', 'MODULE_PAYMENT_SHOPGATE_ALLOWED', 'MODULE_PAYMENT_SHOPGATE_ORDER_STATUS_ID')";
+        } else {
+            $qry = "delete from " . TABLE_CONFIGURATION
+                . " where `key` in ('configuration/MODULE_PAYMENT_SHOPGATE_STATUS', 'configuration/MODULE_PAYMENT_SHOPGATE_ALLOWED', 'MODULE_PAYMENT_SHOPGATE_ORDER_STATUS_ID')";
+        }
+        xtc_db_query($qry);
+        if ($this->checkColumn("shopgate", TABLE_ADMIN_ACCESS)) {
             xtc_db_query("alter table " . TABLE_ADMIN_ACCESS . " DROP COLUMN shopgate");
         }
     }
@@ -303,7 +338,11 @@ class shopgate
      */
     public function keys()
     {
-        return array('MODULE_PAYMENT_SHOPGATE_STATUS');
+        if ($this->useLegacyConfigTable()) {
+            return array('MODULE_PAYMENT_SHOPGATE_STATUS');
+        }
+
+        return array('configuration/MODULE_PAYMENT_SHOPGATE_STATUS');
     }
 
     /**
@@ -567,5 +606,10 @@ class shopgate
         }
 
         return false;
+    }
+
+    private function useLegacyConfigTable()
+    {
+        return !(TABLE_CONFIGURATION === 'gx_configurations');
     }
 }

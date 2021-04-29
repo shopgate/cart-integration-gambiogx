@@ -22,8 +22,10 @@
  * @license   http://www.gnu.org/licenses/gpl-2.0.html GNU General Public License, Version 2.0
  */
 
+$link = '<a href="' . xtc_href_link('shopgate.php?sg_option=config', '', 'NONSSL') . '">Shopgate Configuration</a>';
+
 define('MODULE_PAYMENT_SHOPGATE_TEXT_TITLE', 'Shopgate');
-define('MODULE_PAYMENT_SHOPGATE_TEXT_DESCRIPTION', 'Shopgate - Mobile Shopping.');
+define('MODULE_PAYMENT_SHOPGATE_TEXT_DESCRIPTION', 'Shopgate - Mobile Shopping.<br>' . $link . '<br>');
 define('MODULE_PAYMENT_SHOPGATE_TEXT_INFO', 'Orders are already paid at Shopgate.');
 
 define('MODULE_PAYMENT_SHOPGATE_ORDER_LINE_TEXT_SHIPPING', 'Shipping');
