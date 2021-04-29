@@ -788,7 +788,7 @@ class ShopgateItemModel extends Shopgate_Model_Catalog_Product
 
         $indexTable = ShopgateTools::getCategoryIndexTable();
         if (!$indexTable) {
-            $productsQuery = xtDBquery(
+            $productsQuery = xtc_db_query(
                 "SELECT
             pc.products_id
             FROM " . TABLE_PRODUCTS_TO_CATEGORIES . " pc,
@@ -802,7 +802,7 @@ class ShopgateItemModel extends Shopgate_Model_Catalog_Product
             " . $orderBy
             );
         } else {
-            $productsQuery = xtDBquery(
+            $productsQuery = xtc_db_query(
                 "SELECT
             p.products_id
             FROM " . TABLE_PRODUCTS . " AS p
