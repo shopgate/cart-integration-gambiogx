@@ -168,7 +168,7 @@ class ShopgateInstallHelper
         if (file_put_contents($hashFile, $content) === false) { /*error*/
         }
 
-        if (!(TABLE_CONFIGURATION === 'gx_configurations')) {
+        if ($this->useLegacyConfigTable()) {
             $updateKeyQuery = 'UPDATE ' . TABLE_CONFIGURATION . ' AS c  SET c.configuration_value ="' . $saltedHash
                 . '" WHERE c.configuration_key = "'
                 . self::SHOPGATE_CALLBACK_DATABASE_CONFIG_KEY . '";';
@@ -447,6 +447,6 @@ class ShopgateInstallHelper
 
     private function useLegacyConfigTable()
     {
-        return !(TABLE_CONFIGURATION === 'gx_configurations');
+        return TABLE_CONFIGURATION !== 'gx_configurations';
     }
 }

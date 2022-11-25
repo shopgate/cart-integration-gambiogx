@@ -610,6 +610,6 @@ class shopgate
 
     private function useLegacyConfigTable()
     {
-        return !(TABLE_CONFIGURATION === 'gx_configurations');
+        return TABLE_CONFIGURATION !== 'gx_configurations';
     }
 }
