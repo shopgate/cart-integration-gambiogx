@@ -5,6 +5,8 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
+
+## [2.9.56]
 ### Added
 - support for Gambio GX4
 
@@ -650,7 +652,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 - supports remote cron jobs via Shopgate Plugin API
 - remote cron job for synchronization of order status at Shopgate
 
-[Unreleased]: https://github.com/shopgate/cart-integration-gambiogx/compare/2.9.55...HEAD
+[Unreleased]: https://github.com/shopgate/cart-integration-gambiogx/compare/2.9.56...HEAD
+[2.9.56]: https://github.com/shopgate/cart-integration-gambiogx/compare/2.9.55...2.9.56
 [2.9.55]: https://github.com/shopgate/cart-integration-gambiogx/compare/2.9.54...2.9.55
 [2.9.54]: https://github.com/shopgate/cart-integration-gambiogx/compare/2.9.53...2.9.54
 [2.9.53]: https://github.com/shopgate/cart-integration-gambiogx/compare/2.9.52...2.9.53
