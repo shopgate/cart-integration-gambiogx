@@ -138,7 +138,7 @@ class ShopgateInstallHelper
             $result     = xtc_db_query($tokenQuery);
             $row        = xtc_db_fetch_array($result);
         } catch (Exception $e) {
-            $row = [];
+            $row = array();
         }
 
         if (!empty($row['token']) && $row['token'] != 0) {
