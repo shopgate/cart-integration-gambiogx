@@ -95,12 +95,16 @@ if (isset($_GET['action']) && ($_GET["action"] === "save")) {
             unset($_POST['_shopgate_config']['module_active']);
 
             if ($modulePaymentShopgateStatus != MODULE_PAYMENT_SHOPGATE_STATUS) {
-                xtc_db_query(
-                    'UPDATE ' . TABLE_CONFIGURATION . ' SET configuration_value = "' . xtc_db_prepare_input(
-                        $modulePaymentShopgateStatus
-                    )
-                    . '" WHERE configuration_key = "MODULE_PAYMENT_SHOPGATE_STATUS"'
-                );
+                if (!(TABLE_CONFIGURATION === 'gx_configurations')) {
+                    $qry = 'UPDATE ' . TABLE_CONFIGURATION . ' SET configuration_value = "'
+                        . xtc_db_prepare_input($modulePaymentShopgateStatus)
+                        . '" WHERE configuration_key = "MODULE_PAYMENT_SHOPGATE_STATUS"';
+                } else {
+                    $qry = 'UPDATE ' . TABLE_CONFIGURATION . ' SET `value` = "'
+                        . xtc_db_prepare_input($modulePaymentShopgateStatus)
+                        . '" WHERE `key` = "configuration/MODULE_PAYMENT_SHOPGATE_STATUS"';
+                }
+                xtc_db_query($qry);
             }
         }
 
