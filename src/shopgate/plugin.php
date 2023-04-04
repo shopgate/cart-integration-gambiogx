@@ -1646,6 +1646,7 @@ class ShopgatePluginGambioGX extends ShopgatePlugin
         $address  = $order->getInvoiceAddress();
         $birthday = $address->getBirthday();
 
+        $customer = array();
         $customer["customers_status"]             = DEFAULT_CUSTOMERS_STATUS_ID_GUEST;
         $customer["customers_gender"]             = $address->getGender();
         $customer["customers_firstname"]          = $address->getFirstName();

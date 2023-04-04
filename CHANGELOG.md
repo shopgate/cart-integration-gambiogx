@@ -6,7 +6,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 ### Added
-- support for Orders where "Login with Apple" has been used
+- support for orders where "Login with Apple" has been used
 
 ## [2.9.56]
 ### Added
