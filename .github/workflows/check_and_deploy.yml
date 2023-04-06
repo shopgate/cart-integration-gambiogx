@@ -69,7 +69,7 @@ jobs:
 
   notify-release-success:
     name: Notify developers of new release
-    needs: [release]
+    needs: [deploy]
     runs-on: ubuntu-20.04
     if: |
       success() &&
@@ -89,7 +89,7 @@ jobs:
 
   notify-release-fail:
     name: Notify developers of failed release
-    needs: [release]
+    needs: [deploy]
     runs-on: ubuntu-20.04
     if: |
       failure() &&
