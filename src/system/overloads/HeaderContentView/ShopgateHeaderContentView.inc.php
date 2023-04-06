@@ -23,7 +23,7 @@ class ShopgateHeaderContentView extends ShopgateHeaderContentView_parent
                 include(DIR_FS_CATALOG . '/shopgate/gambiogx/includes/header.php');
                 $p_html_array['head']['top'] .= $shopgateJsHeader;
                 $p_html_array['body']['top'] .= $shopgateMobileHeader;
-                /******** SHOPGATE **********/
+            /******** SHOPGATE **********/
             } else {
                 trigger_error("Variable(s) " . implode(', ', $t_uninitialized_array) . " do(es) not exist in class " . get_class($this) . " or is/are null", E_USER_ERROR);
             }
