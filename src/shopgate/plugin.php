@@ -21,7 +21,7 @@
  * @copyright Shopgate Inc
  * @license   http://www.gnu.org/licenses/gpl-2.0.html GNU General Public License, Version 2.0
  */
-define("SHOPGATE_PLUGIN_VERSION", "2.9.56");
+define("SHOPGATE_PLUGIN_VERSION", "2.9.57");
 
 /**
  * GambioGX Plugin for Shopgate
@@ -1249,6 +1249,8 @@ class ShopgatePluginGambioGX extends ShopgatePlugin
         if (!empty($customersAddress)) {
             $addressFormatCustomer = $this->getAddressFormatId(null, $customersAddress['entry_country_id']);
         } else {
+            // create mandatory default address
+            $this->_saveToAddressBook($invoice, $shopCustomer['customers_id']);
             $customersAddress = array(
                 'entry_gender'         => $shopCustomer['customers_gender'],
                 'entry_company'        => '',
@@ -1557,43 +1559,14 @@ class ShopgatePluginGambioGX extends ShopgatePlugin
     }
 
     /**
-     * create guest user data if a customer has done an order whithout registration
+     * Saves address to address book
      *
-     * @param ShopgateOrder $order
-     *
-     * @return array
+     * @param ShopgateAddress $address
+     * @param int             $customerId
+     * @param bool            $mappedPaymentMethod
      */
-    private function createGuestUser(ShopgateOrder $order)
+    protected function _saveToAddressBook($address, $customerId, $defaultAddress = true)
     {
-        $address  = $order->getInvoiceAddress();
-        $birthday = $address->getBirthday();
-
-        $customer                                 = array();
-        $customer["customers_vat_id_status"]      = 0;
-        $customer["customers_status"]             = DEFAULT_CUSTOMERS_STATUS_ID_GUEST;
-        $customer["customers_gender"]             = $address->getGender();
-        $customer["customers_firstname"]          = $address->getFirstName();
-        $customer["customers_lastname"]           = $address->getLastName();
-        $customer["customers_email_address"]      = $order->getMail();
-        $customer["customers_default_address_id"] = "";
-        $customer["customers_telephone"]          = $order->getPhone();
-        $customer["customers_fax"]                = "";
-        $customer["customers_password"]           = md5(time() . rand(1, 999000));
-        $customer["customers_newsletter"]         = 0;
-        $customer["customers_newsletter_mode"]    = 0;
-        $customer["member_flag"]                  = 0;
-        $customer["delete_user"]                  = 1;
-        $customer["account_type"]                 = 1;
-        $customer["refferers_id"]                 = 0;
-        $customer["customers_date_added"]         = date('Y-m-d H:i:s');
-        $customer["customers_last_modified"]      = date('Y-m-d H:i:s');
-        if (!empty($birthday)) {
-            $customer['customers_dob'] = date("Y-m-d H:i:s", strtotime($birthday));
-        }
-
-        xtc_db_perform(TABLE_CUSTOMERS, $customer);
-        $customerId = xtc_db_insert_id();
-
         $qry     = "SELECT countries_id FROM " . TABLE_COUNTRIES
             . " WHERE UPPER(countries_iso_code_2) = UPPER('{$address->getCountry()}')";
         $qry     = xtc_db_query($qry);
@@ -1652,11 +1625,45 @@ class ShopgatePluginGambioGX extends ShopgatePlugin
         xtc_db_perform(TABLE_ADDRESS_BOOK, $_address);
         $addressId = xtc_db_insert_id();
 
-        $customer = array(
-            "customers_default_address_id" => $addressId,
-            "customers_cid"                => $customerId,
-        );
-        xtc_db_perform(TABLE_CUSTOMERS, $customer, "update", "customers_id = $customerId");
+        if ($defaultAddress) {
+            $customer = array(
+                "customers_default_address_id" => $addressId,
+                "customers_cid"                => $customerId,
+            );
+            xtc_db_perform(TABLE_CUSTOMERS, $customer, "update", "customers_id = $customerId");
+        }
+    }
+
+    /**
+     * create guest user data if a customer has done an order whithout registration
+     *
+     * @param ShopgateOrder $order
+     *
+     * @return array
+     */
+    private function createGuestUser(ShopgateOrder $order)
+    {
+        $address  = $order->getInvoiceAddress();
+        $birthday = $address->getBirthday();
+
+        $customer = array();
+        $customer["customers_status"]             = DEFAULT_CUSTOMERS_STATUS_ID_GUEST;
+        $customer["customers_gender"]             = $address->getGender();
+        $customer["customers_firstname"]          = $address->getFirstName();
+        $customer["customers_lastname"]           = $address->getLastName();
+        $customer["customers_email_address"]      = $order->getMail();
+        $customer["customers_telephone"]          = $order->getPhone();
+        $customer["customers_password"]           = md5(time() . rand(1, 999000));
+        $customer["account_type"]                 = 1;
+        $customer["customers_date_added"]         = date('Y-m-d H:i:s');
+        if (!empty($birthday)) {
+            $customer['customers_dob'] = date("Y-m-d H:i:s", strtotime($birthday));
+        }
+
+        xtc_db_perform(TABLE_CUSTOMERS, $customer);
+        $customerId = xtc_db_insert_id();
+
+        $this->_saveToAddressBook($address, $customerId);
 
         $orderDate = date('Y-m-d H:i:s', (strtotime($order->getCreatedTime('Y-m-d H:i:s')) - 1));
         $_info     = array(
