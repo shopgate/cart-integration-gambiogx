@@ -1664,9 +1664,11 @@ class ShopgatePluginGambioGX extends ShopgatePlugin
             "customers_info_date_of_last_logon"         => $orderDate,
             "customers_info_number_of_logons"           => '1',
             "customers_info_date_account_created"       => $orderDate,
-            "customers_info_date_account_last_modified" => $orderDate,
-            "global_product_notifications"              => 0,
+            "customers_info_date_account_last_modified" => $orderDate
         );
+        if (ShopgateTools::isGambioVersionLowerThan('4.7.2.0')) {
+            $_info['global_product_notifications'] = 0;
+        }
         xtc_db_perform(TABLE_CUSTOMERS_INFO, $_info);
 
         $customerMemo                 = array();
