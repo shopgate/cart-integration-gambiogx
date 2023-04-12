@@ -722,7 +722,8 @@ class ShopgateItemXmlModel extends ShopgateItemModel
      */
     private function setInputFields()
     {
-        $attributeCount  = count($this->generateOptions());
+        $generatedOptions = $this->generateOptions();
+        $attributeCount  = is_array($generatedOptions) ? count($this->generateOptions()) : 0;
         $inputs          = $this->getInputFieldsToProduct();
         $inputResult     = array();
         $firstInputField = reset($inputs);
