@@ -1,7 +1,7 @@
 # Shopgate GambioGX Integration
 
 [![GitHub license](http://dmlc.github.io/img/apache2.svg)](LICENSE.md)
-[![Build Status](https://travis-ci.org/shopgate/cart-integration-gambiogx.svg?branch=master)](https://travis-ci.org/shopgate/cart-integration-gambiogx)
+[![Run CS fixer & deploy](https://github.com/shopgate/cart-integration-gambiogx/actions/workflows/check_and_deploy.yml/badge.svg)](https://github.com/shopgate/cart-integration-gambiogx/actions/workflows/check_and_deploy.yml)
 
 The Shopgate GambioGX integration enables you to connect your GambioGX store with the Shopgate backend.
 
