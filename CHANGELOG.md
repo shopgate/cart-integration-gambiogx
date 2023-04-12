@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [Unreleased]
+### Added
+- support for Gambio GX4.7
+
 ## [2.9.57] - 2023-04-11
 ### Added
 - support for orders where "Login with Apple" has been used

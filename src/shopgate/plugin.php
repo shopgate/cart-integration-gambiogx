@@ -266,9 +266,11 @@ class ShopgatePluginGambioGX extends ShopgatePlugin
         $memoData = array(
             'customers_id' => $userId,
             'memo_date'    => $date,
-            'memo_title'   => 'Shopgate - Account angelegt',
             'memo_text'    => 'Account wurde von Shopgate angelegt',
         );
+        if (ShopgateTools::isGambioVersionLowerThan('4.7.2.0')) {
+            $memoData['memo_title'] = 'Shopgate - Account angelegt';
+        }
         xtc_db_perform(TABLE_CUSTOMERS_MEMO, $memoData);
 
         /** @var ShopgateAddress[] $addresses */
@@ -1671,17 +1673,21 @@ class ShopgatePluginGambioGX extends ShopgatePlugin
             "customers_info_date_of_last_logon"         => $orderDate,
             "customers_info_number_of_logons"           => '1',
             "customers_info_date_account_created"       => $orderDate,
-            "customers_info_date_account_last_modified" => $orderDate,
-            "global_product_notifications"              => 0,
+            "customers_info_date_account_last_modified" => $orderDate
         );
+        if (ShopgateTools::isGambioVersionLowerThan('4.7.2.0')) {
+            $_info['global_product_notifications'] = 0;
+        }
         xtc_db_perform(TABLE_CUSTOMERS_INFO, $_info);
 
         $customerMemo                 = array();
         $customerMemo["customers_id"] = $customerId;
         $customerMemo["memo_date"]    = date('Y-m-d');
-        $customerMemo["memo_title"]   = "Shopgate - Account angelegt";
         $customerMemo["memo_text"]    = "Account wurde von Shopgate angelegt";
         $customerMemo["poster_id"]    = null;
+        if (ShopgateTools::isGambioVersionLowerThan('4.7.2.0')) {
+            $customerMemo["memo_title"] = "Shopgate - Account angelegt";
+        }
         xtc_db_perform("customers_memo", $customerMemo);
 
         $result   = xtc_db_query("SELECT * FROM " . TABLE_CUSTOMERS . " WHERE customers_id = {$customerId}");
