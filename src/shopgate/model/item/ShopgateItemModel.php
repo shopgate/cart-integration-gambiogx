@@ -330,7 +330,6 @@ class ShopgateItemModel extends Shopgate_Model_Catalog_Product
                 = "
                 SELECT
                     pa.products_attributes_id,
-                    pa.gm_ean,
                     pa.sortorder,
                     po.products_options_id,
                     pov.products_options_values_id,
@@ -343,8 +342,7 @@ class ShopgateItemModel extends Shopgate_Model_Catalog_Product
                     pa.attributes_stock,
                     pa.weight_prefix," .
                 ($gxAttributeVPESupportEnabled
-                    ? ("\n                    pa.gm_vpe_value as products_vpe_value," .
-                        "\n                    vpe.products_vpe_name,")
+                    ? ("\n                    vpe.products_vpe_name,")
                     : ("")
                 ) . "
                     pov.gm_filename
@@ -355,7 +353,7 @@ class ShopgateItemModel extends Shopgate_Model_Catalog_Product
                 .
                 ($gxAttributeVPESupportEnabled
                     ? ("\n                LEFT JOIN " . TABLE_PRODUCTS_VPE
-                        . " vpe ON (vpe.products_vpe_id = pa.products_vpe_id AND vpe.language_id = $this->languageId)")
+                        . " vpe ON (vpe.products_vpe_id = '" . $product['products_vpe'] . "' AND vpe.language_id = $this->languageId)") // Use VPE ID from $product array
                     : ("")
                 ) . "
                 WHERE pa.products_id = '" . $product['products_id'] . "'

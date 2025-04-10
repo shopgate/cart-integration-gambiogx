@@ -199,10 +199,10 @@ class ShopgateInstallHelper
 						 OR c.configuration_key    = "' . self::SHOPGATE_CALLBACK_DEFAULT_STORE_NAME_ADDRESS_KEY . '";';
         } else {
             $keyQuery = 'SELECT `key` AS configuration_key, `value` AS configuration_value FROM ' . TABLE_CONFIGURATION . ' as c
-						 WHERE configuration_key = "' . self::SHOPGATE_CALLBACK_DEFAULT_EMAIL_KEY . '"
-						 OR configuration_key    = "' . self::SHOPGATE_CALLBACK_DEFAULT_CONTACT_NAME_KEY . '" 
-						 OR configuration_key    = "' . self::SHOPGATE_CALLBACK_DEFAULT_STORE_NAME_KEY . '"
-						 OR configuration_key    = "' . self::SHOPGATE_CALLBACK_DEFAULT_STORE_NAME_ADDRESS_KEY . '";';
+						 WHERE c.`key` = "' . self::SHOPGATE_CALLBACK_DEFAULT_EMAIL_KEY . '"
+						 OR c.`key`    = "' . self::SHOPGATE_CALLBACK_DEFAULT_CONTACT_NAME_KEY . '" 
+						 OR c.`key`    = "' . self::SHOPGATE_CALLBACK_DEFAULT_STORE_NAME_KEY . '"
+						 OR c.`key`    = "' . self::SHOPGATE_CALLBACK_DEFAULT_STORE_NAME_ADDRESS_KEY . '";';
         }
         $result                 = xtc_db_query($keyQuery);
         $storeHolderInformation = array();

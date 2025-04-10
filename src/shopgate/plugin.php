@@ -4075,7 +4075,7 @@ class ShopgatePluginGambioGX extends ShopgatePlugin
 
         $productQuery   = $itemXmlModel->generateProductQuery($limit, $offset, $uids);
         $qryResult      = xtc_db_query($productQuery);
-        $orderInfoDummy = "";
+        $orderInfoDummy = array(); // Initialize as array
 
         while ($item = xtc_db_fetch_array($qryResult)) {
             if (empty($item['products_name']) || $itemXmlModel->isProductDeactivated($item, $orderInfoDummy)) {

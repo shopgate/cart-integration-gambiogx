@@ -257,7 +257,7 @@ class shopgate
                  . $this->sort_order . "', 'gm_cfg_select_option(array(\'True\', \'False\'), ', now())";
         } else {
             $qry = "insert into " . TABLE_CONFIGURATION
-                . " ( `key`, `value`,  legacy_group_id, sort_order) values ('configuration/MODULE_PAYMENT_SHOPGATE_STATUS', 'True', '6', '"
+                . " ( `key`, `value`, `sort_order`) values ('configuration/MODULE_PAYMENT_SHOPGATE_STATUS', 'True', '"
                  . $this->sort_order . "')";
         }
         xtc_db_query($qry);
@@ -267,7 +267,7 @@ class shopgate
                 . $this->sort_order . "', now())";
         } else {
             $qry = "insert into " . TABLE_CONFIGURATION
-                . " ( `key`, `value`,  `legacy_group_id`, `sort_order`) values ('configuration/MODULE_PAYMENT_SHOPGATE_ALLOWED', '0',   '6', '"
+                . " ( `key`, `value`, `sort_order`) values ('configuration/MODULE_PAYMENT_SHOPGATE_ALLOWED', '0', '"
                 . $this->sort_order . "')";
         }
         xtc_db_query($qry);
@@ -290,8 +290,8 @@ class shopgate
                     . $this->sort_order . "', now())";
             } else {
                 $qry = "insert into " . TABLE_CONFIGURATION
-                    . " ( `key`, `value`,  `legacy_group_id`, `sort_order`) values ('"
-                    . ShopgateInstallHelper::SHOPGATE_CALLBACK_DATABASE_CONFIG_KEY . "'  , '0',   '6', '"
+                    . " ( `key`, `value`, `sort_order`) values ('"
+                    . ShopgateInstallHelper::SHOPGATE_CALLBACK_DATABASE_CONFIG_KEY . "'  , '0', '"
                     . $this->sort_order . "')";
             }
             xtc_db_query($qry);

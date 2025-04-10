@@ -481,14 +481,18 @@ class ShopgateItemXmlModel extends ShopgateItemModel
         $images = array();
         if ($this->getIsChild()) {
             foreach ($this->cache['currentChild'] as $variation) {
+                if (!is_array($variation)) {
+                    continue;
+                }
+
                 if ($this->checkAttributeIsProperty()) {
-                    $variationImage = $variation['combi_image'];
+                    $variationImage = isset($variation['combi_image']) ? $variation['combi_image'] : null;
                     $subDirectory   = "images/product_images/properties_combis_images/";
                 } else {
-                    $variationImage = $variation['gm_filename'];
+                    $variationImage = isset($variation['gm_filename']) ? $variation['gm_filename'] : null;
                     $subDirectory   = "images/product_images/attribute_images/";
                 }
-                if (empty($variation['combi_image']) && empty($variation['gm_filename'])) {
+                if (empty($variationImage)) {
                     continue;
                 }
                 $imageModel = new Shopgate_Model_Media_Image();
