@@ -22,6 +22,11 @@
  * @license   http://www.gnu.org/licenses/gpl-2.0.html GNU General Public License, Version 2.0
  */
 
+// Define TABLE_ADMIN_ACCESS if it's not already defined by Gambio core
+if (!defined('TABLE_ADMIN_ACCESS')) {
+    define('TABLE_ADMIN_ACCESS', 'admin_access');
+}
+
 include_once DIR_FS_CATALOG . '/shopgate/gambiogx/shopgate_config.php';
 include_once DIR_FS_CATALOG . '/shopgate/gambiogx/includes/modules/payment/ShopgateInstallHelper.php';
 include_once(DIR_FS_CATALOG . '/shopgate/gambiogx/ShopgateTools.php');
@@ -411,49 +416,49 @@ class shopgate
      */
     private function updateDatabase()
     {
-        if ($this->checkColumn('shopgate_shop_number')) {
+        if (!$this->checkColumn('shopgate_shop_number')) {
             $qry = 'ALTER TABLE `' . TABLE_ORDERS_SHOPGATE_ORDER
                 . '` ADD `shopgate_shop_number` BIGINT(20) UNSIGNED NULL AFTER `shopgate_order_number`;';
             xtc_db_query($qry);
         }
 
-        if ($this->checkColumn('is_paid')) {
+        if (!$this->checkColumn('is_paid')) {
             $qry = 'ALTER TABLE  `' . TABLE_ORDERS_SHOPGATE_ORDER
                 . '` ADD  `is_paid` TINYINT(1) UNSIGNED NULL AFTER `shopgate_shop_number`;';
             xtc_db_query($qry);
         }
 
-        if ($this->checkColumn('is_cancelled')) {
+        if (!$this->checkColumn('is_cancelled')) {
             $qry = 'ALTER TABLE  `' . TABLE_ORDERS_SHOPGATE_ORDER
                 . '` ADD  `is_cancelled` TINYINT(1) UNSIGNED DEFAULT 0 AFTER `is_paid`;';
             xtc_db_query($qry);
         }
 
-        if ($this->checkColumn('is_shipping_blocked')) {
+        if (!$this->checkColumn('is_shipping_blocked')) {
             $qry = 'ALTER TABLE `' . TABLE_ORDERS_SHOPGATE_ORDER
                 . '` ADD  `is_shipping_blocked` TINYINT(1) UNSIGNED NULL AFTER  `is_paid`;';
             xtc_db_query($qry);
         }
 
-        if ($this->checkColumn('payment_infos')) {
+        if (!$this->checkColumn('payment_infos')) {
             $qry = 'ALTER TABLE `' . TABLE_ORDERS_SHOPGATE_ORDER
                 . '` ADD  `payment_infos` TEXT NULL AFTER  `is_shipping_blocked`;';
             xtc_db_query($qry);
         }
 
-        if ($this->checkColumn('is_sent_to_shopgate')) {
+        if (!$this->checkColumn('is_sent_to_shopgate')) {
             $qry = 'ALTER TABLE `' . TABLE_ORDERS_SHOPGATE_ORDER
                 . '` ADD  `is_sent_to_shopgate` TINYINT(1) UNSIGNED NULL AFTER `payment_infos`;';
             xtc_db_query($qry);
         }
 
-        if ($this->checkColumn('modified')) {
+        if (!$this->checkColumn('modified')) {
             $qry = 'ALTER TABLE `' . TABLE_ORDERS_SHOPGATE_ORDER
                 . '` ADD  `modified` DATETIME NULL AFTER `is_sent_to_shopgate`;';
             xtc_db_query($qry);
         }
 
-        if ($this->checkColumn('created')) {
+        if (!$this->checkColumn('created')) {
             $qry = 'ALTER TABLE `' . TABLE_ORDERS_SHOPGATE_ORDER . '` ADD  `created` DATETIME NULL AFTER `modified`;';
             xtc_db_query($qry);
         }
