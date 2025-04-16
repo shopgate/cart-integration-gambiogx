@@ -588,7 +588,7 @@ class shopgate
             }
         }
 
-        return !$exists;
+        return $exists;
     }
 
     /**
