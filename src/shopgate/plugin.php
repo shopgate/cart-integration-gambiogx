@@ -209,11 +209,11 @@ class ShopgatePluginGambioGX extends ShopgatePlugin
         }
 
         if (!defined('TABLE_CUSTOMERS_MEMO')) {
-            define(TABLE_CUSTOMERS_MEMO, "customers_memo");
+            define('TABLE_CUSTOMERS_MEMO', "customers_memo");
         }
 
         if (!defined('TABLE_CUSTOMERS_INFO')) {
-            define(TABLE_CUSTOMERS_INFO, "customers_info");
+            define('TABLE_CUSTOMERS_INFO', "customers_info");
         }
 
         $customerData = array(
