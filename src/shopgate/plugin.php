@@ -101,7 +101,9 @@ class ShopgatePluginGambioGX extends ShopgatePlugin
     {
         $this->requireFiles();
 
-        $initHelper   = new ShopgatePluginInitHelper();
+        $initHelper = new ShopgatePluginInitHelper();
+        $initHelper->includeLanguageFiles($this->language, $this->gambioGXVersion);
+        $initHelper->includeShopgateLanguageFile($this->language);
         $this->config = $initHelper->getShopgateConfig();
         $initHelper->initDatabaseConstants();
         $initHelper->initShopgateDatabaseConstants();
@@ -174,10 +176,6 @@ class ShopgatePluginGambioGX extends ShopgatePlugin
             );
 
         $this->zoneId = $this->config->getTaxZoneId();
-
-        $initHelper->includeLanguageFiles($this->language, $this->gambioGXVersion);
-
-        $initHelper->includeShopgateLanguageFile($this->language);
 
         return true;
     }
