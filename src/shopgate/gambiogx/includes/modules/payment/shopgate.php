@@ -356,7 +356,7 @@ class shopgate
      */
     private function grantAdminAccess()
     {
-        if ($this->checkColumn("shopgate", TABLE_ADMIN_ACCESS)) {
+        if (!$this->checkColumn("shopgate", TABLE_ADMIN_ACCESS)) {
             // Create column shopgate in admin_access...
             xtc_db_query("alter table " . TABLE_ADMIN_ACCESS . " ADD shopgate INT( 1 ) NOT NULL");
 
