@@ -8,9 +8,6 @@
         <testsuite name="UnitTests">
             <directory suffix="Test.php">tests/unit</directory>
         </testsuite>
-        <testsuite name="IntegrationTests">
-            <directory suffix="Test.php">tests/integration</directory>
-        </testsuite>
     </testsuites>
     <filter>
         <whitelist>

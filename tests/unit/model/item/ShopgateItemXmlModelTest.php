@@ -22,7 +22,7 @@
  * @copyright Shopgate Inc
  * @license   http://www.gnu.org/licenses/gpl-2.0.html GNU General Public License, Version 2.0
  */
-class ShopgateItemXmlModelTest extends PHPUnit_Framework_TestCase
+class ShopgateItemXmlModelTest extends \PHPUnit\Framework\TestCase
 {
     /** @var ShopgateItemXmlModel|PHPUnit_Framework_MockObject_MockObject */
     protected $subjectUnderTest;
@@ -30,7 +30,7 @@ class ShopgateItemXmlModelTest extends PHPUnit_Framework_TestCase
     /**
      * Initializing main test class as mock
      */
-    public function setUp()
+    public function setUp(): void
     {
         $this->subjectUnderTest = $this->getMockBuilder('ShopgateItemXmlModel')
             ->disableOriginalConstructor()
