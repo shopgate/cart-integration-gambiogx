@@ -364,7 +364,7 @@ class ShopgateLocationModel extends ShopgateObject
      *
      * @return null|int
      */
-    public function getTaxRateToProduct($productsTaxClassId, $check = true, $ggxVersion, $countryId, $zoneId)
+    public function getTaxRateToProduct($productsTaxClassId, $check, $ggxVersion, $countryId, $zoneId)
     {
         $tax_rate = null;
         if ($check) {

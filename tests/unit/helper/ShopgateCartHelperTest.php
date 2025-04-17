@@ -22,12 +22,12 @@
  * @copyright Shopgate Inc
  * @license   http://www.gnu.org/licenses/gpl-2.0.html GNU General Public License, Version 2.0
  */
-class ShopgateCartHelperTest extends PHPUnit_Framework_TestCase
+class ShopgateCartHelperTest extends \PHPUnit\Framework\TestCase
 {
     /** @var ShopgateCartHelper */
     protected $subjectUnderTest;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->subjectUnderTest = new ShopgateCartHelper();
     }
