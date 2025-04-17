@@ -4,9 +4,6 @@
   "homepage": "https://github.com/shopgate/cart-integration-shopware",
   "license": "GPL-2.0",
   "config": {
-    "platform": {
-      "php": "5.6"
-    },
     "vendor-dir": "src/shopgate/vendor"
   },
   "authors": [
@@ -22,11 +19,11 @@
     "check&test": ["@check", "@test"]
   },
   "require": {
-    "php": ">=5.4",
-    "shopgate/cart-integration-sdk" : "~2.9.70"
+    "php": ">=7.3",
+    "shopgate/cart-integration-sdk" : "~2.10.3"
   },
   "require-dev": {
     "friendsofphp/php-cs-fixer": "^2.18",
-    "phpunit/phpunit": "~4.8.10"
+    "phpunit/phpunit": "~9.0"
   }
 }

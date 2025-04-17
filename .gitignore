@@ -11,3 +11,4 @@ src/shopgate/vendor
 /.php-cs.cache
 /release/package
 .php_cs.cache
+composer.lock
