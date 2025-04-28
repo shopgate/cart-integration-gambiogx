@@ -563,7 +563,7 @@ class ShopgateItemXmlModel extends ShopgateItemModel
                 foreach ($this->cache['currentChild'] as $child) {
                     $identifierModel = new Shopgate_Model_Catalog_Identifier();
                     $identifierModel->setType("ean");
-                    $identifierModel->setValue($child['gm_ean']);
+                    $identifierModel->setValue($this->item['products_ean']);
                     $identifierData[] = $identifierModel;
 
                     if (!empty($child['attributes_model'])) {
