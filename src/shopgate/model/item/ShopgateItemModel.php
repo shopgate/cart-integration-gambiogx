@@ -1598,6 +1598,7 @@ class ShopgateItemModel extends Shopgate_Model_Catalog_Product
                 mf.manufacturers_name,
                 p.products_tax_class_id,
                 p.products_fsk18,
+                p.products_vpe,
                 p.products_vpe_status,
                 p.products_vpe_value,
                 vpe.products_vpe_name,
