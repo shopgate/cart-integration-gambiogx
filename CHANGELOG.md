@@ -5,6 +5,8 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
+
+## [2.9.59]
 ### Added
 - support for Gambio GX4.9 and PHP 8.1
 - uses Shopgate Cart Integration SDK 2.10.3
@@ -663,7 +665,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 - supports remote cron jobs via Shopgate Plugin API
 - remote cron job for synchronization of order status at Shopgate
 
-[Unreleased]: https://github.com/shopgate/cart-integration-gambiogx/compare/2.9.58...HEAD
+[Unreleased]: https://github.com/shopgate/cart-integration-gambiogx/compare/2.9.59...HEAD
+[2.9.59]: https://github.com/shopgate/cart-integration-gambiogx/compare/2.9.58...2.9.59
 [2.9.58]: https://github.com/shopgate/cart-integration-gambiogx/compare/2.9.57...2.9.58
 [2.9.57]: https://github.com/shopgate/cart-integration-gambiogx/compare/2.9.56...2.9.57
 [2.9.56]: https://github.com/shopgate/cart-integration-gambiogx/compare/2.9.55...2.9.56
