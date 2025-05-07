@@ -133,7 +133,7 @@ class ShopgatePluginInitHelper
             $languageTextManager = MainFactory::create_object('LanguageTextManager', array(), true);
         }
 
-        include_once rtrim(DIR_FS_CATALOG, '/') . "/shopgate/gambiogx/lang/$language/admin/$language.php";
+        include_once rtrim(DIR_FS_CATALOG, '/') . "/shopgate/gambiogx/lang/$language/admin/shopgate.php";
 
         foreach ($langFiles as $langFile) {
             if (version_compare($gambioCompareVersion, '2.1', '>=')) {

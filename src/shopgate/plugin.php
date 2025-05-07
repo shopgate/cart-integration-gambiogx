@@ -101,7 +101,9 @@ class ShopgatePluginGambioGX extends ShopgatePlugin
     {
         $this->requireFiles();
 
-        $initHelper   = new ShopgatePluginInitHelper();
+        $initHelper = new ShopgatePluginInitHelper();
+        $initHelper->includeLanguageFiles($this->language, $this->gambioGXVersion);
+        $initHelper->includeShopgateLanguageFile($this->language);
         $this->config = $initHelper->getShopgateConfig();
         $initHelper->initDatabaseConstants();
         $initHelper->initShopgateDatabaseConstants();
@@ -175,10 +177,6 @@ class ShopgatePluginGambioGX extends ShopgatePlugin
 
         $this->zoneId = $this->config->getTaxZoneId();
 
-        $initHelper->includeLanguageFiles($this->language, $this->gambioGXVersion);
-
-        $initHelper->includeShopgateLanguageFile($this->language);
-
         return true;
     }
 
@@ -211,11 +209,11 @@ class ShopgatePluginGambioGX extends ShopgatePlugin
         }
 
         if (!defined('TABLE_CUSTOMERS_MEMO')) {
-            define(TABLE_CUSTOMERS_MEMO, "customers_memo");
+            define('TABLE_CUSTOMERS_MEMO', "customers_memo");
         }
 
         if (!defined('TABLE_CUSTOMERS_INFO')) {
-            define(TABLE_CUSTOMERS_INFO, "customers_info");
+            define('TABLE_CUSTOMERS_INFO', "customers_info");
         }
 
         $customerData = array(
@@ -4075,7 +4073,7 @@ class ShopgatePluginGambioGX extends ShopgatePlugin
 
         $productQuery   = $itemXmlModel->generateProductQuery($limit, $offset, $uids);
         $qryResult      = xtc_db_query($productQuery);
-        $orderInfoDummy = "";
+        $orderInfoDummy = array(); // Initialize as array
 
         while ($item = xtc_db_fetch_array($qryResult)) {
             if (empty($item['products_name']) || $itemXmlModel->isProductDeactivated($item, $orderInfoDummy)) {

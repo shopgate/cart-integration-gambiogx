@@ -5,6 +5,9 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
+### Added
+- support for Gambio GX4.9 and PHP 8.1
+- uses Shopgate Cart Integration SDK 2.10.3
 
 ## [2.9.58] - 2023-04-12
 ### Added

@@ -243,7 +243,7 @@ class ShopgateItemPropertyHelper
      */
     protected function getExportFiltersAsString()
     {
-        return "('" . implode("', '", $this->shopgateConfiguration->getExportFiltersAsProperties()) . "')";
+        return "('" . implode("', '", (array)$this->shopgateConfiguration->getExportFiltersAsProperties()) . "')";
     }
 
     /**

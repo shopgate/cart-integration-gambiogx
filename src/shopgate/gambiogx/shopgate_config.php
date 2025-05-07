@@ -28,6 +28,8 @@ if (file_exists(__DIR__ . '/../vendor/autoload.php')) {
 
 include_once __DIR__ . '/../gambiogx/ShopgateTools.php';
 
+// Define plugin version for callback helper
+define('SHOPGATE_CALLBACK_PLUGIN_VERSION', '2.9.58');
 define('SHOPGATE_SETTING_VARIATION_TYPE_BOTH', 0);
 define('SHOPGATE_SETTING_VARIATION_TYPE_PROPERTY', 1);
 define('SHOPGATE_SETTING_VARIATION_TYPE_ATTRIBUTE', 2);

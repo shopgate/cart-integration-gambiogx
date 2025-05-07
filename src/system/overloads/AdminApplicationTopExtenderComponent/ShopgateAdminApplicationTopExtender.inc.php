@@ -15,16 +15,20 @@ class ShopgateAdminApplicationTopExtender extends ShopgateAdminApplicationTopExt
     {
         parent::proceed();
 
-        /******** SHOPGATE **********/
-        if (defined('MODULE_PAYMENT_INSTALLED') && strpos(MODULE_PAYMENT_INSTALLED, 'shopgate.php') !== false) {
-            $t_lang_file_path = DIR_FS_CATALOG . '/shopgate/gambiogx/lang/' . basename($_SESSION['language']) . '/admin/' . basename($_SESSION['language']) . '.php';
-            if (file_exists($t_lang_file_path)) {
-                include_once($t_lang_file_path);
-            }
+        $t_lang_file_path = DIR_FS_CATALOG . 'shopgate/gambiogx/lang/' . basename($_SESSION['language']) . '/admin/shopgate.php';
+        if (file_exists($t_lang_file_path)) {
+            include_once($t_lang_file_path);
+        }
+        $t_lang_file_path = DIR_FS_CATALOG . 'shopgate/gambiogx/lang/' . basename($_SESSION['language']) . '/modules/payment/shopgate.php';
+        if (file_exists($t_lang_file_path)) {
+            include_once($t_lang_file_path);
         }
 
         define('FILENAME_SHOPGATE', 'shopgate.php');
         define("TABLE_SHOPGATE_ORDERS", "orders_shopgate_order");
-        /******** SHOPGATE **********/
+        // Define TABLE_ADMIN_ACCESS if it's not already defined by Gambio core
+        if (!defined('TABLE_ADMIN_ACCESS')) {
+            define('TABLE_ADMIN_ACCESS', 'admin_access');
+        }
     }
 }

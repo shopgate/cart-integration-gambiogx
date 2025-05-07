@@ -44,6 +44,11 @@ $sg_language = (!empty($_GET['sg_language'])
     : null
 );
 
+// Default sg_option to 'config' if not set
+if (empty($_GET['sg_option'])) {
+    $_GET['sg_option'] = 'config';
+}
+
 // remove '?' characters from the language id. This can happen if a wrong formatted link is used
 if (!empty($sg_language)) {
     $sg_language = trim($sg_language, '?');
@@ -1194,9 +1199,9 @@ $shopgateWikiLink = 'https://support.shopgate.com/hc/en-us/articles/202798386#4'
                                                                     ($shopgateConfig['order_status_open'] == $sgOrderState['orders_status_id']) &&
                                                                     ($shopgateConfig['language'] == $sgOrderState['code']))
                                                                     ? 'selected="selected"'
-                                                                    : ($shopgateConfig['order_status_open'] == $sgOrderState['orders_status_id'])
+                                                                    : (($shopgateConfig['order_status_open'] == $sgOrderState['orders_status_id'])
                                                                         ? 'selected="selected"'
-                                                                        : '';
+                                                                        : '');
                                                                 ?>
                                                                 <option
                                                                         value="<?php echo $sgOrderState["orders_status_id"] ?>" <?php echo $selected; ?>>
@@ -1234,9 +1239,9 @@ $shopgateWikiLink = 'https://support.shopgate.com/hc/en-us/articles/202798386#4'
                                                                     ($shopgateConfig['order_status_shipping_blocked'] == $sgOrderState['orders_status_id']) &&
                                                                     ($shopgateConfig['language'] == $sgOrderState['code']))
                                                                     ? 'selected="selected"'
-                                                                    : ($shopgateConfig['order_status_shipping_blocked'] == $sgOrderState['orders_status_id'])
+                                                                    : (($shopgateConfig['order_status_shipping_blocked'] == $sgOrderState['orders_status_id'])
                                                                         ? 'selected="selected"'
-                                                                        : '';
+                                                                        : '');
                                                                 ?>
                                                                 <option
                                                                         value="<?php echo $sgOrderState["orders_status_id"] ?>" <?php echo $selected; ?>>
@@ -1274,9 +1279,9 @@ $shopgateWikiLink = 'https://support.shopgate.com/hc/en-us/articles/202798386#4'
                                                                     ($shopgateConfig['order_status_shipped'] == $sgOrderState['orders_status_id']) &&
                                                                     ($shopgateConfig['language'] == $sgOrderState['code']))
                                                                     ? 'selected="selected"'
-                                                                    : ($shopgateConfig['order_status_shipped'] == $sgOrderState['orders_status_id'])
+                                                                    : (($shopgateConfig['order_status_shipped'] == $sgOrderState['orders_status_id'])
                                                                         ? 'selected="selected"'
-                                                                        : '';
+                                                                        : '');
                                                                 ?>
                                                                 <option
                                                                         value="<?php echo $sgOrderState["orders_status_id"] ?>" <?php echo $selected; ?>>
@@ -1316,9 +1321,9 @@ $shopgateWikiLink = 'https://support.shopgate.com/hc/en-us/articles/202798386#4'
                                                                     ($shopgateConfig['order_status_canceled'] == $sgOrderState['orders_status_id']) &&
                                                                     ($shopgateConfig['language'] == $sgOrderState['code']))
                                                                     ? 'selected="selected"'
-                                                                    : ($shopgateConfig['order_status_canceled'] == $sgOrderState['orders_status_id'])
+                                                                    : (($shopgateConfig['order_status_canceled'] == $sgOrderState['orders_status_id'])
                                                                         ? 'selected="selected"'
-                                                                        : '';
+                                                                        : '');
                                                                 ?>
                                                                 <option
                                                                         value="<?php echo $sgOrderState["orders_status_id"] ?>" <?php echo $selected; ?>>
